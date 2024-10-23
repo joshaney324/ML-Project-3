@@ -1,6 +1,5 @@
 import csv
 import numpy as np
-import random as random
 
 
 class BreastCancerSet:

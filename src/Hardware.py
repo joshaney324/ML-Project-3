@@ -1,6 +1,5 @@
 import csv
 import numpy as np
-from HelperFunctions import binary_encoding
 
 
 class MachineSet:

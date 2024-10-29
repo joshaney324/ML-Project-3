@@ -1,6 +1,7 @@
 from Network import Network
 
-network = Network(2, 2, 2, [4, 4], 0.01,
-                  "classification", 100)
+network = Network(0.1, 2, [2, 2], 2, 2)
+
+layer_Vals = network.feedforward([2, 1])
 
 print("test")

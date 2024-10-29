@@ -3,22 +3,15 @@ from Node import Node
 
 
 class Layer:
-    def __init__(self, num_nodes, activation_type):
+    def __init__(self, num_nodes, num_inputs):
+        self.num_inputs = num_inputs
         self.node_list = []
-        self.layer_type = None
-        self.activation_type = activation_type
-        self.inputs = []
-        self.outputs = []
-        self.layer_gradients = []
-
         for i in range(num_nodes):
-            self.node_list.append(Node(self.activation_type, self.layer_type))
+            self.node_list.append(Node(np.random.rand(self.num_inputs), 1))
 
-    def forward(self, inputs):
-        print("forward pass")
+    def feed_forward(self, inputs):
+        outputs = []
+        for node in self.node_list:
+            outputs.append(node.feedforward(inputs))
 
-    def backward(self, gradients):
-        print("backward pass")
-
-    def update_layer_weights(self, learning_rate):
-        print("update weights")
+        return outputs

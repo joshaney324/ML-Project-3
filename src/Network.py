@@ -1,37 +1,38 @@
 import numpy as np
 from Layer import Layer
+from Metric_functions import mean_squared_error
 
 
 class Network:
-    def __init__(self, num_inputs, num_outputs, num_hidden_layers, hidden_node_list, learning_rate,
-                 net_type, max_train_iterations):
-        self.num_inputs = num_inputs
-        self.num_outputs = num_outputs
-        self.num_hidden_layers = num_hidden_layers
-        self.hidden_node_list = hidden_node_list
-        self.learning_rate = learning_rate
-        self.net_type = net_type
+    def __init__(self, learning_rate, num_hidden_layers, hidden_layer_sizes, num_inputs, num_outputs, max_train_iterations):
         self.max_train_iterations = max_train_iterations
         self.layers = []
+        self.learning_rate = learning_rate
 
-        input_layer = Layer(num_inputs, "linear")
-        input_layer.layer_type = "input"
-        self.layers.append(input_layer)
-
+        # set up hidden layers
         for i in range(num_hidden_layers):
-            layer = Layer(hidden_node_list[i], "sigmoid")
-            layer.layer_type = "hidden"
-
             if i == 0:
-                layer.weights = np.random.randn(hidden_node_list[i], num_inputs) * 0.01
+                self.layers.append(Layer(hidden_layer_sizes[i], num_inputs))
             else:
-                layer.weights = np.random.randn(hidden_node_list[i], hidden_node_list[i - 1]) * 0.01
+                self.layers.append(Layer(hidden_layer_sizes[i], hidden_layer_sizes[i - 1]))
 
-            self.layers.append(layer)
+        self.layers.append(Layer(num_outputs, hidden_layer_sizes[-1]))
 
-        output_layer = Layer(num_outputs, "linear")
-        output_layer.layer_type = "output"
-        output_layer.weights = np.random.randn(hidden_node_list[-1], num_outputs) * 0.01
+    def feedforward(self, inputs):
+        layer_vals = []
 
-        self.layers.append(output_layer)
+        for i in range(len(self.layers)):
+            if i == 0:
+                layer_vals.append(self.layers[i].feed_forward(inputs))
+            else:
+                layer_vals.append(self.layers[i].feed_forward(layer_vals[-1]))
+
+        return layer_vals
+
+    # def backpropagation(self, inputs):
+    #     layer_vals = self.feedforward(inputs)
+    #
+    #     for i in range(self.max_train_iterations):
+
+
 

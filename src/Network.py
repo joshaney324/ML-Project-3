@@ -27,7 +27,15 @@ class Network:
             else:
                 layer_vals.append(self.layers[i].feed_forward(layer_vals[-1]))
 
+        # return layer_vals
         return layer_vals
+
+    # this function returns a list of lists of errors for all nodes in the network
+    def get_errors(self, inputs, outputs):
+        errors = np.array(np.array(self.feedforward(inputs)) - np.array(outputs))
+        for i in range(len(self.layers) - 1):
+            weight_matrix = self.layers[-(i+2)].get_weight_matrix()
+            errors = np.insert(errors, [0], self.layers[-(i+1)].get_errors(errors[0], weight_matrix), axis=0)
 
     # def backpropagation(self, inputs):
     #     layer_vals = self.feedforward(inputs)

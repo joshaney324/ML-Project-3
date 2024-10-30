@@ -20,16 +20,21 @@ class Layer:
     ## with each column representing a node on the current layer, and the value in that entry representing the weight
     ## from the previous layer's node to the current layer's node
     def get_weight_matrix(self):
+        # Declare the weight matrix
         weight_matrix = np.array
+        # Add all the incoming weights to each node as rows of the matrix
         for node in self.node_list:
             weight_matrix = weight_matrix.append(node.weights, axis=0)
+        # Take the transpose of the matrix, so that rows represent outgoing weights from the last row's nodes
         weight_matrix = weight_matrix.T
         return weight_matrix
 
-    ## This function takes in the errors on the next layer and the next layer's weight matrix, and returns an array of
-    ## errors for the current layer
+    # This function takes in the errors on the next layer and the next layer's weight matrix, and returns an array of
+    # errors for the current layer
     def get_errors(self, errors_next_layer, weight_matrix_next_layer):
         errors = []
+        # Calculate the error for each node in the current layer using the next layer's errors and the correct row of
+        # the weight matrix
         for i in range(len(self.node_list)):
             errors.append(node_error_calc(errors_next_layer, weight_matrix_next_layer[i]))
         return errors

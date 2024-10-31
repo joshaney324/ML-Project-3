@@ -3,11 +3,14 @@ from Node import Node, node_error_calc
 
 
 class Layer:
-    def __init__(self, num_nodes, num_inputs):
+    def __init__(self, num_nodes, num_inputs, has_bias):
         self.num_inputs = num_inputs
         self.node_list = []
+        self.has_bias = has_bias
         for i in range(num_nodes):
-            self.node_list.append(Node(np.random.rand(self.num_inputs), 1))
+            self.node_list.append(Node(np.random.rand(self.num_inputs), False))
+        if has_bias:
+            self.node_list.append(Node([], True))
 
     def feed_forward(self, inputs):
         outputs = []
@@ -21,11 +24,13 @@ class Layer:
     ## from the previous layer's node to the current layer's node
     def get_weight_matrix(self):
         # Declare the weight matrix
-        weight_matrix = np.array
+        weight_matrix = []
         # Add all the incoming weights to each node as rows of the matrix
         for node in self.node_list:
-            weight_matrix = weight_matrix.append(node.weights, axis=0)
+            if not node.isBias:
+                weight_matrix.append(node.weights)
         # Take the transpose of the matrix, so that rows represent outgoing weights from the last row's nodes
+        weight_matrix = np.array(weight_matrix)
         weight_matrix = weight_matrix.T
         return weight_matrix
 
@@ -36,5 +41,6 @@ class Layer:
         # Calculate the error for each node in the current layer using the next layer's errors and the correct row of
         # the weight matrix
         for i in range(len(self.node_list)):
-            errors.append(node_error_calc(errors_next_layer, weight_matrix_next_layer[i]))
+            if not self.node_list[i].isBias:
+                errors.append(node_error_calc(errors_next_layer, weight_matrix_next_layer[i]))
         return errors

@@ -1,11 +1,11 @@
 import numpy as np
-from Layer import Layer
+from Layer import Layer, softmax
 from Metric_functions import mean_squared_error
 
 # TODO: Change bias configuration or backpropogation and error algorithm so weights from biases can be updated
-
 # TODO: Implement backpropogation for updates to weights to output layer (using derivative of output activation function)
 # TODO: Implement weight update algorithms (likely descending from network to layer to node), given weight updates for all nodes
+
 # TODO: Implement minibatch learning
 
 class Network:
@@ -34,10 +34,13 @@ class Network:
                     self.layers.append(Layer(hidden_layer_sizes[i], hidden_layer_sizes[i - 1] + 1, has_bias))
                 else:
                     self.layers.append(Layer(hidden_layer_sizes[i], hidden_layer_sizes[i - 1], has_bias))
-        if self.layers[-1].has_bias:
-            self.layers.append(Layer(num_outputs, hidden_layer_sizes[-1] + 1, False))
+        if len(self.layers) > 0:
+            if self.layers[-1].has_bias:
+                self.layers.append(Layer(num_outputs, hidden_layer_sizes[-1] + 1, False))
+            else:
+                self.layers.append(Layer(num_outputs, hidden_layer_sizes[-1], False))
         else:
-            self.layers.append(Layer(num_outputs, hidden_layer_sizes[-1], False))
+            self.layers.append(Layer(num_outputs, num_inputs, False))
 
     def feedforward(self, inputs):
         layer_vals = []
@@ -47,7 +50,8 @@ class Network:
                 layer_vals.append(self.layers[i].feed_forward(inputs))
             else:
                 layer_vals.append(self.layers[i].feed_forward(layer_vals[-1]))
-
+        if self.output_type == "classification":
+            layer_vals[-1] = softmax(layer_vals[-1])
         return layer_vals
 
     # This function returns a list of lists of errors for all nodes in the network
@@ -87,27 +91,15 @@ class Network:
                 layer_weight_updates.append(node_weight_updates)
             weight_updates.append(layer_weight_updates)
         output_layer_weight_updates = []
-        if self.output_type == "regression":
-            for h in range(len(self.layers[-1].node_list)):
-                node_weight_updates = []
-                for j in range(len(self.layers[-1].node_list[h].weights)):
-                    weight_update = self.learning_rate * error_vals[-1][h] * (1) * layer_vals[-2][j]
-                    node_weight_updates.append(weight_update)
-                output_layer_weight_updates.append(node_weight_updates)
+        for h in range(len(self.layers[-1].node_list)):
+            node_weight_updates = []
+            for j in range(len(self.layers[-1].node_list[h].weights)):
+                weight_update = self.learning_rate * error_vals[-1][h] * layer_vals[-2][j]
+                node_weight_updates.append(weight_update)
+            output_layer_weight_updates.append(node_weight_updates)
         weight_updates.append(output_layer_weight_updates)
-        if self.output_type == "classification":
-            for h in range(len(self.layers[-1].node_list)):
-                node_weight_updates = []
-                for j in range(len(self.layers[-1].node_list[h].weights)):
-                    weight_update = self.learning_rate * error_vals[-1][h] * (1) * layer_vals[-2][j]
-                    node_weight_updates.append(weight_update)
-                output_layer_weight_updates.append(node_weight_updates)
-        weight_updates.append(output_layer_weight_updates)
-        return weight_updates
-    # def backpropagation(self, inputs):
-    #     layer_vals = self.feedforward(inputs)
-    #
-    #     for i in range(self.max_train_iterations):
-
+        # return weight_updates
+        for i, layer in enumerate(self.layers):
+            layer.update_weights(weight_updates[i])
 
 

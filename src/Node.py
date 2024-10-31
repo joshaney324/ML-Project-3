@@ -2,7 +2,7 @@ from ActivationFunction import ActivationFunction
 import numpy as np
 
 def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+    return np.exp(x) / (1 + np.exp(x))
 
 # This function takes in the errors of the next layer and the outgoing weights from this node to that layer and
 # calculates the error for this node
@@ -27,3 +27,6 @@ class Node:
             output = np.dot(inputs, self.weights)
             return sigmoid(output)
 
+    def update(self, weight_changes):
+        for i, weight in enumerate(self.weights):
+            self.weights[i] = weight + weight_changes[i]

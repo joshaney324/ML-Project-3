@@ -1,6 +1,8 @@
 import numpy as np
 from Node import Node, node_error_calc
 
+def softmax(output_vals):
+    return np.exp(output_vals)/np.sum(np.exp(output_vals))
 
 class Layer:
     def __init__(self, num_nodes, num_inputs, has_bias):
@@ -8,7 +10,7 @@ class Layer:
         self.node_list = []
         self.has_bias = has_bias
         for i in range(num_nodes):
-            self.node_list.append(Node(np.random.rand(self.num_inputs), False))
+            self.node_list.append(Node(np.random.rand(self.num_inputs) * 0.01, False))
         if has_bias:
             self.node_list.append(Node([], True))
 
@@ -44,3 +46,7 @@ class Layer:
             if not self.node_list[i].isBias:
                 errors.append(node_error_calc(errors_next_layer, weight_matrix_next_layer[i]))
         return errors
+
+    def update_weights(self, weight_update_matrix):
+        for i, node in enumerate(self.node_list):
+            node.update(weight_update_matrix[i])

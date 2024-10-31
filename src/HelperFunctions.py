@@ -1,5 +1,6 @@
 import numpy as np
 
+# TODO: Implement input normalization function(s)
 
 def binary_encoding(data, indices):
     uniques = [np.unique(data[:, col]) for col in indices]

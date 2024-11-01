@@ -102,22 +102,23 @@ class Network:
             weight_updates.append(layer_weight_updates)
         output_layer_weight_updates = []
         # calculate the changes in the weights to the output layer -- only change from the previous for loop is that the derivative of the activation function is 1, so it has been taken out (and some indexing)
-        for h in range(len(self.layers[-1].node_list)):
-            node_weight_updates = []
-            for j in range(len(self.layers[-1].node_list[h].weights)):
-                weight_update = self.learning_rate * error_vals[-1][h] * layer_vals[-2][j]
-                node_weight_updates.append(weight_update)
-            output_layer_weight_updates.append(node_weight_updates)
-        weight_updates.append(output_layer_weight_updates)
+        if len(self.layers) > 1:
+            for h in range(len(self.layers[-1].node_list)):
+                node_weight_updates = []
+                for j in range(len(self.layers[-1].node_list[h].weights)):
+                    weight_update = self.learning_rate * error_vals[-1][h] * layer_vals[-2][j]
+                    node_weight_updates.append(weight_update)
+                output_layer_weight_updates.append(node_weight_updates)
+            weight_updates.append(output_layer_weight_updates)
         # update weights using the changes calculated above
         for i, layer in enumerate(self.layers):
             layer.update_weights(weight_updates[i])
 
 
-    def train(self, data, labels, max_iterations):
+    # def train(self, data, labels, max_iterations):
         # TODO
 
-    def predict(self, test_point):
+    # def predict(self, test_point):
         # TODO
-        return self.feedforward(test_point)[-1]
+        # return self.feedforward(test_point)[-1]
 

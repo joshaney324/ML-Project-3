@@ -47,6 +47,7 @@ class Layer:
                 errors.append(node_error_calc(errors_next_layer, weight_matrix_next_layer[i]))
         return errors
 
+    # update the weights of each node on the layer, given a weight update matrix (each row corresponds to a single node's weight changes)
     def update_weights(self, weight_update_matrix):
         for i, node in enumerate(self.node_list):
             node.update(weight_update_matrix[i])

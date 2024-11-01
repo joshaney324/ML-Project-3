@@ -103,3 +103,9 @@ class Network:
             layer.update_weights(weight_updates[i])
 
 
+    def train(self, data, labels, max_iterations):
+        # TODO
+
+    def predict(self, test_point):
+        # TODO
+

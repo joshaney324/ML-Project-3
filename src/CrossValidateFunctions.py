@@ -4,7 +4,8 @@ from Metric_functions import precision, recall, accuracy, mean_squared_error
 from Fold_functions import get_folds_classification, get_folds_regression
 
 
-def cross_validate_classification(data_folds, label_folds, k_nearest_neighbors, p):
+def cross_validate_classification(data_folds, label_folds, learning_rate, num_hidden_layers, hidden_layer_sizes,
+                                  num_inputs, num_outputs, output_type, biased_layers):
     # the cross_validate function is meant to get the precision, recall and accuracy values from each fold then print
     # out the average across folds. this function takes in a list of data folds and a list of label folds. it does not
     # return anything but prints out the metrics
@@ -16,6 +17,8 @@ def cross_validate_classification(data_folds, label_folds, k_nearest_neighbors, 
     folds = len(data_folds)
     matrix_total = np.zeros((2, 2))
     accuracies = []
+    network = Network(learning_rate, num_hidden_layers, hidden_layer_sizes, num_inputs, num_outputs, output_type,
+                      biased_layers)
 
     # For each testing fold, set up a training and testing set and then append the loss function values
     for i in range(len(data_folds)):
@@ -39,6 +42,7 @@ def cross_validate_classification(data_folds, label_folds, k_nearest_neighbors, 
         test_data = np.array(test_data)
         test_labels = np.array(test_labels)
 
+        # network.train
         predictions = []
         for datapoint in test_data:
             predictions.append(predict_classification(train_data, train_labels, datapoint, k_nearest_neighbors, p))

@@ -1,8 +1,10 @@
 from ActivationFunction import ActivationFunction
 import numpy as np
 
+
 def sigmoid(x):
-    return np.exp(x) / (1 + np.exp(x))
+    return 1/(1 + np.exp(-x))
+
 
 # This function takes in the errors of the next layer and the outgoing weights from this node to that layer and
 # calculates the error for this node
@@ -13,6 +15,7 @@ def node_error_calc(errors_next_layer, weights_from_next_layer):
     error = np.dot(errors_next_layer, weights_from_next_layer)
 
     return error
+
 
 class Node:
     def __init__(self, weights, isBias):

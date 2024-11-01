@@ -108,4 +108,5 @@ class Network:
 
     def predict(self, test_point):
         # TODO
+        return self.feedforward(test_point)[-1]
 

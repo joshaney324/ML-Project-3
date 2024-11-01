@@ -114,10 +114,11 @@ class Network:
             layer.update_weights(weight_updates[i])
 
 
-    def train(self, data, labels, max_iterations):
-        # TODO
-
-    def predict(self, test_point):
-        # TODO
-        return self.feedforward(test_point)[-1]
+    # def train(self, data, labels, max_iterations):
+    #     # TODO
+    #
+    #
+    # def predict(self, test_point):
+    #     # TODO
+    #     return self.feedforward(test_point)[-1]
 

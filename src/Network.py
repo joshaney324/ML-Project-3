@@ -3,6 +3,8 @@ from Layer import Layer, softmax
 from Metric_functions import mean_squared_error, accuracy
 from CrossValidateFunctions import cross_validate_tune_classification, cross_validate_tune_regression
 from Fold_functions import get_tune_folds, get_folds_classification, get_folds_regression
+from src.Node import sigmoid_derivative
+
 
 # TODO: Change bias configuration or backpropogation and error algorithm so weights from biases can be updated
 # TODO: Implement backpropogation for updates to weights to output layer (using derivative of output activation function)
@@ -65,7 +67,6 @@ class Network:
             # Get the weight matrix of the last layer with a calculated error
             weight_matrix = self.layers[-(i+1)].get_weight_matrix()
             # Add the errors of the current layer to the errors list
-
             layer_errors = self.layers[-(i+2)].get_errors(errors[0], weight_matrix)
             errors.insert(0, layer_errors)
         return errors
@@ -77,11 +78,11 @@ class Network:
         weight_updates = []
         input_layer_weight_updates = []
         # calculate the changes in the weights to the first hidden layer -- only change from the following for loop is that the previous row values are just the input layer values
-        if (len(self.layers) > 1):
+        if len(self.layers) > 1:
             for h in range(len(self.layers[0].node_list)):
                 node_weight_updates = []
                 for j in range(len(self.layers[0].node_list[h].weights)):
-                    weight_update = self.learning_rate * error_vals[0][h] * (layer_vals[0][h] * (1 - layer_vals[0][h])) * inputs[j]
+                    weight_update = self.learning_rate * error_vals[0][h] * sigmoid_derivative(layer_vals[0][h]) * inputs[j]
                     node_weight_updates.append(weight_update)
                 input_layer_weight_updates.append(node_weight_updates)
             weight_updates.append(input_layer_weight_updates)
@@ -96,7 +97,7 @@ class Network:
                 # for every node on the previous layer (equivalently, every weight incoming to this node
                 for j in range(len(self.layers[k].node_list[h].weights)):
                     # update function from the book -- multiply learning rate, error on this node, derivative of activation function for this node at its current value, and value of node the weight is coming from
-                    weight_update = self.learning_rate * error_vals[k][h] * (layer_vals[k][h] * (1 - layer_vals[k][h])) * layer_vals[k-1][j]
+                    weight_update = self.learning_rate * error_vals[k][h] * sigmoid_derivative(layer_vals[k][h]) * layer_vals[k-1][j]
                     # append the weight update for that weight to the update array for the node
                     node_weight_updates.append(weight_update)
                 # append the update array for that node to the update matrix for the layer

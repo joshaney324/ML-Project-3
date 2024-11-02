@@ -8,7 +8,6 @@ def sigmoid(x):
 def sigmoid_derivative(x):
     return sigmoid(x)*(1-sigmoid(x))
 
-
 # This function takes in the errors of the next layer and the outgoing weights from this node to that layer and
 # calculates the error for this node
 def node_error_calc(errors_next_layer, weights_from_next_layer):
@@ -32,6 +31,18 @@ class Node:
         else:
             output = np.dot(inputs, self.weights)
             return sigmoid(output)
+
+    def get_updates(self, learning_rate, node_error, node_val, inputs, is_output):
+        node_weight_updates = []
+        if not is_output:
+            for j in range(len(self.weights)):
+                weight_update = learning_rate * node_error * sigmoid_derivative(node_val) * inputs[j]
+                node_weight_updates.append(weight_update)
+        if is_output:
+            for j in range(len(self.weights)):
+                weight_update = learning_rate * node_error * inputs[j]
+                node_weight_updates.append(weight_update)
+        return node_weight_updates
 
     def update(self, weight_changes):
         for i, weight in enumerate(self.weights):

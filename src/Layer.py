@@ -1,5 +1,6 @@
 import numpy as np
-from Node import Node, node_error_calc
+from Node import Node, node_error_calc, sigmoid_derivative
+
 
 def softmax(output_vals):
     return np.exp(output_vals)/np.sum(np.exp(output_vals))
@@ -47,6 +48,12 @@ class Layer:
                 errors.append(node_error_calc(errors_next_layer, weight_matrix_next_layer[i]))
         return errors
 
+    def get_weight_updates(self, learning_rate, is_output, layer_errors, layer_vals, inputs):
+        layer_weight_updates = []
+        for h in range(len(self.node_list)):
+            node_weight_updates = self.node_list[h].get_updates(learning_rate, layer_errors[h], layer_vals[h], inputs, is_output)
+            layer_weight_updates.append(node_weight_updates)
+        return layer_weight_updates
     # update the weights of each node on the layer, given a weight update matrix (each row corresponds to a single node's weight changes)
     def update_weights(self, weight_update_matrix):
         for i, node in enumerate(self.node_list):

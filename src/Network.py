@@ -76,54 +76,71 @@ class Network:
         layer_vals = self.feedforward(inputs)
         error_vals = self.get_errors(layer_vals[-1], expected_outputs)
         weight_updates = []
-        input_layer_weight_updates = []
+        # input_layer_weight_updates = []
+        # # calculate the changes in the weights to the first hidden layer -- only change from the following for loop is that the previous row values are just the input layer values
+        # if len(self.layers) > 1:
+        #     for h in range(len(self.layers[0].node_list)):
+        #         node_weight_updates = []
+        #         for j in range(len(self.layers[0].node_list[h].weights)):
+        #             weight_update = self.learning_rate * error_vals[0][h] * sigmoid_derivative(layer_vals[0][h]) * inputs[j]
+        #             node_weight_updates.append(weight_update)
+        #         input_layer_weight_updates.append(node_weight_updates)
+        #     weight_updates.append(input_layer_weight_updates)
+        # # calculate the changes in the weights to the remaining hidden layers
+        # for k in range(1, len(self.layers) - 1):
+        #     # initialize the weight update matrix for this layer -- this will store all the updates to all the weights TO the layer
+        #     layer_weight_updates = []
+        #     # for each node on the layer...
+        #     for h in range(len(self.layers[k].node_list)):
+        #         # initialize the weight update array for that node -- this will store all the updates to all the weights TO the node
+        #         node_weight_updates = []
+        #         # for every node on the previous layer (equivalently, every weight incoming to this node
+        #         for j in range(len(self.layers[k].node_list[h].weights)):
+        #             # update function from the book -- multiply learning rate, error on this node, derivative of activation function for this node at its current value, and value of node the weight is coming from
+        #             weight_update = self.learning_rate * error_vals[k][h] * sigmoid_derivative(layer_vals[k][h]) * layer_vals[k-1][j]
+        #             # append the weight update for that weight to the update array for the node
+        #             node_weight_updates.append(weight_update)
+        #         # append the update array for that node to the update matrix for the layer
+        #         layer_weight_updates.append(node_weight_updates)
+        #     # append the update matrix for that layer to the structure storing all weight updates for the network
+        #     weight_updates.append(layer_weight_updates)
+        # output_layer_weight_updates = []
+        # # calculate the changes in the weights to the output layer -- only change from the previous for loop is that the derivative of the activation function is 1, so it has been taken out (and some indexing)
+        # if len(self.layers) > 1:
+        #     for h in range(len(self.layers[-1].node_list)):
+        #         node_weight_updates = []
+        #         for j in range(len(self.layers[-1].node_list[h].weights)):
+        #             weight_update = self.learning_rate * error_vals[-1][h] * layer_vals[-2][j]
+        #             node_weight_updates.append(weight_update)
+        #         output_layer_weight_updates.append(node_weight_updates)
+        #     weight_updates.append(output_layer_weight_updates)
+        #
+        # if len(self.layers) == 1:
+        #     for h in range(len(self.layers[0].node_list)):
+        #         node_weight_updates = []
+        #         for j in range(len(self.layers[0].node_list[h].weights)):
+        #             weight_update = self.learning_rate * error_vals[0][h] * inputs[j]
+        #             node_weight_updates.append(weight_update)
+        #         input_layer_weight_updates.append(node_weight_updates)
+        #     weight_updates.append(input_layer_weight_updates)
+
         # calculate the changes in the weights to the first hidden layer -- only change from the following for loop is that the previous row values are just the input layer values
         if len(self.layers) > 1:
-            for h in range(len(self.layers[0].node_list)):
-                node_weight_updates = []
-                for j in range(len(self.layers[0].node_list[h].weights)):
-                    weight_update = self.learning_rate * error_vals[0][h] * sigmoid_derivative(layer_vals[0][h]) * inputs[j]
-                    node_weight_updates.append(weight_update)
-                input_layer_weight_updates.append(node_weight_updates)
-            weight_updates.append(input_layer_weight_updates)
-        # calculate the changes in the weights to the remaining hidden layers
-        for k in range(1, len(self.layers) - 1):
-            # initialize the weight update matrix for this layer -- this will store all the updates to all the weights TO the layer
-            layer_weight_updates = []
-            # for each node on the layer...
-            for h in range(len(self.layers[k].node_list)):
-                # initialize the weight update array for that node -- this will store all the updates to all the weights TO the node
-                node_weight_updates = []
-                # for every node on the previous layer (equivalently, every weight incoming to this node
-                for j in range(len(self.layers[k].node_list[h].weights)):
-                    # update function from the book -- multiply learning rate, error on this node, derivative of activation function for this node at its current value, and value of node the weight is coming from
-                    weight_update = self.learning_rate * error_vals[k][h] * sigmoid_derivative(layer_vals[k][h]) * layer_vals[k-1][j]
-                    # append the weight update for that weight to the update array for the node
-                    node_weight_updates.append(weight_update)
-                # append the update array for that node to the update matrix for the layer
-                layer_weight_updates.append(node_weight_updates)
-            # append the update matrix for that layer to the structure storing all weight updates for the network
+            layer_weight_updates = self.layers[0].get_weight_updates(self.learning_rate, False, error_vals[0],
+                                                                    layer_vals[0], inputs)
             weight_updates.append(layer_weight_updates)
-        output_layer_weight_updates = []
-        # calculate the changes in the weights to the output layer -- only change from the previous for loop is that the derivative of the activation function is 1, so it has been taken out (and some indexing)
-        if len(self.layers) > 1:
-            for h in range(len(self.layers[-1].node_list)):
-                node_weight_updates = []
-                for j in range(len(self.layers[-1].node_list[h].weights)):
-                    weight_update = self.learning_rate * error_vals[-1][h] * layer_vals[-2][j]
-                    node_weight_updates.append(weight_update)
-                output_layer_weight_updates.append(node_weight_updates)
-            weight_updates.append(output_layer_weight_updates)
+            for k in range(1, len(self.layers) - 1):
+                layer_weight_updates = self.layers[k].get_weight_updates(self.learning_rate, False, error_vals[0],
+                                                                         layer_vals[k], layer_vals[k-1])
+                weight_updates.append(layer_weight_updates)
 
+            layer_weight_updates = self.layers[-1].get_weight_updates(self.learning_rate, True, error_vals[-1],
+                                                                    layer_vals[-1], layer_vals[-2])
+            weight_updates.append(layer_weight_updates)
         if len(self.layers) == 1:
-            for h in range(len(self.layers[0].node_list)):
-                node_weight_updates = []
-                for j in range(len(self.layers[0].node_list[h].weights)):
-                    weight_update = self.learning_rate * error_vals[0][h] * inputs[j]
-                    node_weight_updates.append(weight_update)
-                input_layer_weight_updates.append(node_weight_updates)
-            weight_updates.append(input_layer_weight_updates)
-
+            layer_weight_updates = self.layers[0].get_weight_updates(self.learning_rate, True, error_vals[0],
+                                                                     layer_vals[0], inputs)
+            weight_updates.append(layer_weight_updates)
         # update weights using the changes calculated above
         for i, layer in enumerate(self.layers):
             layer.update_weights(weight_updates[i])

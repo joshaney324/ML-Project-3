@@ -75,13 +75,14 @@ class Network:
         weight_updates = []
         input_layer_weight_updates = []
         # calculate the changes in the weights to the first hidden layer -- only change from the following for loop is that the previous row values are just the input layer values
-        for h in range(len(self.layers[0].node_list)):
-            node_weight_updates = []
-            for j in range(len(self.layers[0].node_list[h].weights)):
-                weight_update = self.learning_rate * error_vals[0][h] * (1 - layer_vals[0][h]) * inputs[j]
-                node_weight_updates.append(weight_update)
-            input_layer_weight_updates.append(node_weight_updates)
-        weight_updates.append(input_layer_weight_updates)
+        if (len(self.layers) > 1):
+            for h in range(len(self.layers[0].node_list)):
+                node_weight_updates = []
+                for j in range(len(self.layers[0].node_list[h].weights)):
+                    weight_update = self.learning_rate * error_vals[0][h] * (layer_vals[0][h] * (1 - layer_vals[0][h])) * inputs[j]
+                    node_weight_updates.append(weight_update)
+                input_layer_weight_updates.append(node_weight_updates)
+            weight_updates.append(input_layer_weight_updates)
         # calculate the changes in the weights to the remaining hidden layers
         for k in range(1, len(self.layers) - 1):
             # initialize the weight update matrix for this layer -- this will store all the updates to all the weights TO the layer
@@ -110,10 +111,19 @@ class Network:
                     node_weight_updates.append(weight_update)
                 output_layer_weight_updates.append(node_weight_updates)
             weight_updates.append(output_layer_weight_updates)
+
+        if len(self.layers) == 1:
+            for h in range(len(self.layers[0].node_list)):
+                node_weight_updates = []
+                for j in range(len(self.layers[0].node_list[h].weights)):
+                    weight_update = self.learning_rate * error_vals[0][h] * inputs[j]
+                    node_weight_updates.append(weight_update)
+                input_layer_weight_updates.append(node_weight_updates)
+            weight_updates.append(input_layer_weight_updates)
+
         # update weights using the changes calculated above
         for i, layer in enumerate(self.layers):
             layer.update_weights(weight_updates[i])
-
 
     # def train(self, data, labels, max_iterations):
         # TODO

@@ -19,10 +19,16 @@ class AbaloneSet:
         labels = self.data[:, -1:]
 
         # Normalize all the feature rows from 0 to 1
-        features_min = features.min(axis=0)
-        features_max = features.max(axis=0)
+        features = self.data[:, :-1]
+        labels = self.data[:, -1]
+        features = np.array(features, dtype=float)
+        labels = np.array(labels).reshape(-1, 1)
 
-        normalized_features = (features - features_min) / (features_max - features_min)
+        # Normalize all the feature rows from 0 to 1
+        features_min = np.mean(features, axis=0)
+        features_max = np.std(features, axis=0)
+
+        normalized_features = (features - features_min) / features_max
 
         self.data = np.concatenate((normalized_features, labels), axis=1)
 

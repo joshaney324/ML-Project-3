@@ -10,7 +10,7 @@ class Layer:
         self.node_list = []
         self.has_bias = has_bias
         for i in range(num_nodes):
-            self.node_list.append(Node(np.random.rand(self.num_inputs) * 0.01, False))
+            self.node_list.append(Node(np.random.uniform(-0.01, 0.01, self.num_inputs), False))
         if has_bias:
             self.node_list.append(Node([], True))
 

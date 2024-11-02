@@ -1,11 +1,11 @@
 import numpy as np
-from Network import Network
 from Metric_functions import precision, recall, accuracy, mean_squared_error
 from Fold_functions import get_folds_classification, get_folds_regression
 
 
-def cross_validate_classification(data_folds, label_folds, learning_rate, num_hidden_layers, hidden_layer_sizes,
+def cross_validate_classification(data_folds, label_folds, tune_data, tune_labels, learning_rate, num_hidden_layers, hidden_layer_sizes,
                                   num_inputs, num_outputs, output_type, biased_layers, max_iterations):
+    from Network import Network
     # the cross_validate function is meant to get the precision, recall and accuracy values from each fold then print
     # out the average across folds. this function takes in a list of data folds and a list of label folds. it does not
     # return anything but prints out the metrics
@@ -42,7 +42,7 @@ def cross_validate_classification(data_folds, label_folds, learning_rate, num_hi
         test_data = np.array(test_data)
         test_labels = np.array(test_labels)
 
-        network.train(train_data, train_labels, max_iterations)
+        network.train(train_data, train_labels, tune_data, tune_labels, max_iterations)
         predictions = []
         for datapoint in test_data:
             predictions.append(network.predict(datapoint))
@@ -75,7 +75,7 @@ def cross_validate_classification(data_folds, label_folds, learning_rate, num_hi
 
 def cross_validate_regression(data_folds, label_folds, learning_rate, num_hidden_layers, hidden_layer_sizes, num_inputs,
                               num_outputs, output_type, biased_layers, max_iterations):
-
+    from Network import Network
     # This function is meant to cross validate the regression sets it returns a mean squared error
 
     # Set up variables
@@ -118,7 +118,7 @@ def cross_validate_regression(data_folds, label_folds, learning_rate, num_hidden
 
 def cross_validate_tune_regression(data_folds, label_folds, test_data, test_labels, learning_rate, num_hidden_layers,
                                    hidden_layer_sizes, num_inputs, num_outputs, output_type, biased_layers, max_iterations):
-
+    from Network import Network
     # This function is meant to cross validate the regression sets but leave out the testing folds and use the tune
     # folds instead
 
@@ -159,7 +159,7 @@ def cross_validate_tune_regression(data_folds, label_folds, test_data, test_labe
 def cross_validate_tune_classification(data_folds, label_folds, test_data, test_labels, learning_rate,
                                        num_hidden_layers, hidden_layer_sizes, num_inputs, num_outputs, output_type,
                                        biased_layers, max_iterations):
-
+    from Network import Network
     # This function is meant to cross validate the classification sets but leave out the testing folds and use the tune
     # folds instead
 
@@ -170,11 +170,12 @@ def cross_validate_tune_classification(data_folds, label_folds, test_data, test_
     folds = len(data_folds)
     matrix_total = np.zeros((2,2))
     accuracies = []
-    network = Network(learning_rate, num_hidden_layers, hidden_layer_sizes, num_inputs, num_outputs, output_type,
-                      biased_layers)
+
 
     # For each testing fold, set up a training and testing set and then append the loss function values
     for i in range(len(data_folds)):
+        network = Network(learning_rate, num_hidden_layers, hidden_layer_sizes, num_inputs, num_outputs, output_type,
+                          biased_layers)
         train_data = []
         train_labels = []
         for j in range(len(data_folds)):

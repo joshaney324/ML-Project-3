@@ -79,7 +79,7 @@ def get_folds_classification(data, labels, num_folds):
 
     # determine the number of instances of each class in each fold,
     # storing the values in a 2d numpy array (each row is a fold, each column is a class)
-    classes, num_instances = np.unique(labels, return_counts=True)
+    classes, num_instances = np.unique(labels, return_counts=True, axis=0)
     num_instances_perfold = np.zeros((num_folds, len(classes)), int)
     for i in range(len(num_instances_perfold[0])):
         for j in range(len(num_instances_perfold)):
@@ -107,7 +107,7 @@ def get_folds_classification(data, labels, num_folds):
             num_instances_infold = num_instances_perfold[i,j]
             k = 0
             while k < len(labels):
-                if classes[j] == labels[k]:
+                if np.array_equal(classes[j], labels[k]):
                     label_folds[i] = np.append(label_folds[i], labels[k])
                     data_folds[i] = np.vstack((data_folds[i], data[k]))
                     data = np.delete(data, k, 0)

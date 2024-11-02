@@ -1,6 +1,8 @@
 import numpy as np
 from Layer import Layer, softmax
-from Metric_functions import mean_squared_error
+from Metric_functions import mean_squared_error, accuracy
+from CrossValidateFunctions import cross_validate_tune_classification, cross_validate_tune_regression
+from Fold_functions import get_tune_folds, get_folds_classification, get_folds_regression
 
 # TODO: Change bias configuration or backpropogation and error algorithm so weights from biases can be updated
 # TODO: Implement backpropogation for updates to weights to output layer (using derivative of output activation function)
@@ -125,8 +127,42 @@ class Network:
         for i, layer in enumerate(self.layers):
             layer.update_weights(weight_updates[i])
 
-    # def train(self, data, labels, max_iterations):
-        # TODO
+    def train(self, data, labels, test_data, test_labels, max_iterations):
+        if self.output_type == 'classification':
+            best_metric = 0.0
+            data_folds, label_folds = get_folds_classification(data, labels, 10)
+        else:
+            best_metric = np.inf
+            data_folds, label_folds = get_folds_regression(data, labels, 10)
+        for i in range(max_iterations):
+            for datapoint, label in zip(data, labels):
+                self.backpropogation(datapoint, label)
+                if self.output_type == 'classification':
+                    train_data, train_labels, test_data, test_labels = get_tune_folds(data_folds, label_folds)
+                    train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
+                    predictions = []
+                    for datum in test_data:
+                        predictions.append(self.feedforward(datum)[-1])
+                    accuracy_vals, matrix = accuracy(predictions, test_labels)
+                    acc_val = np.mean(accuracy_vals)
+
+                    new_metric = acc_val
+                    if new_metric < best_metric:
+                        print("convergence reached")
+                        return
+                elif self.output_type == 'regression':
+                    train_data, train_labels, test_data, test_labels = get_tune_folds(data_folds, label_folds)
+                    train_data_folds, train_label_folds = get_folds_regression(train_data, train_labels, 10)
+                    predictions = []
+                    for datum in test_data:
+                        predictions.append(self.feedforward(datum)[-1])
+                    mse = mean_squared_error(test_labels, predictions, len(predictions))
+
+                    new_metric = mse
+                    if new_metric > best_metric:
+                        print("convergence reached")
+                        return
+
 
     # def predict(self, test_point):
         # TODO

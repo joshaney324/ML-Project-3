@@ -26,7 +26,8 @@ def mean_squared_error(predictions, true_vals, n):
 
     # square all the differences between the predictions and the true values
     for i in range(len(predictions)):
-        error += abs(true_vals[i] - predictions[i]) ** 2
+        val = abs(true_vals[i] - predictions[i]) ** 2
+        error += val[0, 0]
     # return the error divided by n
     return error / n
 
@@ -39,7 +40,7 @@ def precision(predictions, labels):
     # turn parameters into numpy arrays and get unique classes
     labels = np.array(labels)
     predictions = np.array(predictions)
-    classes = np.unique(labels)
+    classes = np.unique(labels, axis=0)
     class_precisions = []
 
     # for each class in the prediction set calculate the number of true positives divided by the sum of true positives
@@ -48,9 +49,9 @@ def precision(predictions, labels):
         tp = 0
         fp = 0
         for prediction, label in zip(predictions, labels):
-            if prediction == class_instance and prediction == label:
+            if np.array_equal(prediction, class_instance) and np.array_equal(prediction, label):
                 tp += 1
-            elif prediction == class_instance and prediction != label:
+            elif np.array_equal(prediction, class_instance) and not np.array_equal(prediction, label):
                 fp += 1
         if tp + fp != 0:
             class_precisions.append(float(tp/(tp + fp)))
@@ -66,7 +67,7 @@ def recall(predictions, labels):
     # turn parameters into numpy arrays and get unique classes
     labels = np.array(labels)
     predictions = np.array(predictions)
-    classes = np.unique(labels)
+    classes = np.unique(labels, axis=0)
     class_recalls = []
 
     # for each class in the prediction set calculate the number of true positives divided by the sum of true positives
@@ -75,9 +76,9 @@ def recall(predictions, labels):
         tp = 0
         fn = 0
         for prediction, label in zip(predictions, labels):
-            if prediction == class_instance and prediction == label:
+            if np.array_equal(prediction, class_instance) and np.array_equal(prediction, label):
                 tp += 1
-            elif prediction != class_instance and class_instance == label:
+            elif not np.array_equal(prediction, class_instance) and np.array_equal(prediction, class_instance):
                 fn += 1
         if tp + fn != 0:
             class_recalls.append(float(tp / (tp + fn)))
@@ -93,7 +94,7 @@ def accuracy(predictions, labels):
     # turn parameters into numpy arrays and get unique classes
     labels = np.array(labels)
     predictions = np.array(predictions)
-    classes = np.unique(labels)
+    classes = np.unique(labels, axis=0)
     class_accuracies = []
 
     # for each class in the prediction set calculate the sum of true positives and true negatives divided by the sum of
@@ -105,13 +106,13 @@ def accuracy(predictions, labels):
         fp = 0
         fn = 0
         for prediction, label in zip(predictions, labels):
-            if prediction == class_instance:
-                if class_instance == label:
+            if np.array_equal(prediction, class_instance):
+                if np.array_equal(label, class_instance):
                     tp += 1
                 else:
                     fp += 1
             else:
-                if class_instance == label:
+                if np.array_equal(label, class_instance):
                     fn += 1
                 else:
                     tn += 1

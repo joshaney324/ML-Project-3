@@ -83,7 +83,7 @@ def get_folds_classification(data, labels, num_folds):
     num_instances_perfold = np.zeros((num_folds, len(classes)), int)
     for i in range(len(num_instances_perfold[0])):
         for j in range(len(num_instances_perfold)):
-            num_instances_perfold[j,i] = num_instances[i] // num_folds
+            num_instances_perfold[j, i] = num_instances[i] // num_folds
         num_extra = num_instances[i] % num_folds
         for k in range(num_extra):
             num_instances_perfold[k,i] += 1
@@ -92,7 +92,7 @@ def get_folds_classification(data, labels, num_folds):
     # one list with data and one with labels
     label_folds = []
     for i in range(num_folds):
-        label_folds.append(np.empty(shape=0))
+        label_folds.append(np.empty(shape=(0, len(labels[0]))))
     data_folds = []
     for i in range(num_folds):
         data_folds.append(np.empty(shape=(0, len(data[0]))))
@@ -102,16 +102,16 @@ def get_folds_classification(data, labels, num_folds):
     # then get the number of instances of that class in that fold,
     # then iterate through the labels to add them,
     # and remove the instances added to that fold from the data/labels classes to ensure uniqueness
-    for i in range(len(num_instances_perfold[:,0])):
+    for i in range(len(num_instances_perfold[:, 0])):
         for j in range(len(num_instances_perfold[i])):
             num_instances_infold = num_instances_perfold[i,j]
             k = 0
             while k < len(labels):
                 if np.array_equal(classes[j], labels[k]):
-                    label_folds[i] = np.append(label_folds[i], labels[k])
+                    label_folds[i] = np.vstack((label_folds[i], labels[k]))
                     data_folds[i] = np.vstack((data_folds[i], data[k]))
                     data = np.delete(data, k, 0)
-                    labels = np.delete(labels, k)
+                    labels = np.delete(labels, k, 0)
                     num_instances_infold -= 1
                     k -= 1
                 if num_instances_infold == 0:

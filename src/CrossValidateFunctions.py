@@ -1,3 +1,5 @@
+import datetime
+
 import numpy as np
 from Metric_functions import precision, recall, accuracy, mean_squared_error
 from Fold_functions import get_folds_classification, get_folds_regression
@@ -47,30 +49,24 @@ def cross_validate_classification(data_folds, label_folds, tune_data, tune_label
         for datapoint in test_data:
             predictions.append(network.predict(datapoint))
 
-        precision_vals = np.array(precision(predictions, test_labels))
-        recall_vals = np.array(recall(predictions, test_labels))
-        accuracy_vals, matrix = accuracy(predictions, test_labels)
-        accuracy_vals = np.array(accuracy_vals)
+        pre_vals = precision(predictions, test_labels)
+        precision_vals = []
+        for val in pre_vals:
+            precision_vals.append(val[1])
+        rec_vals = recall(predictions, test_labels)
+        recall_vals = []
+        for val in rec_vals:
+            recall_vals.append(val[1])
+        acc, matrix = accuracy(predictions, test_labels)
+        accuracy_vals = []
+        for val in acc:
+            accuracy_vals.append(val[1])
 
-        precision_total = 0
-        recall_total = 0
-        accuracy_total = 0
-        counter = 0
-
-        # get the averages of all the precision, recall, and accuracy values from all the folds
-        for precision_val, recall_val, accuracy_val in zip(precision_vals, recall_vals, accuracy_vals):
-            precision_total += float(precision_val[1])
-            recall_total += float(recall_val[1])
-            accuracies.append(float(accuracy_val[1]))
-            accuracy_total += float(accuracy_val[1])
-            matrix_total = matrix_total + np.array(matrix)
-            counter += 1
-
-        precision_avg += precision_total / counter
-        recall_avg += recall_total / counter
-        accuracy_avg += accuracy_total / counter
-
-    return [precision_avg / folds, recall_avg / folds, accuracy_avg / folds]
+        precision_avg += np.mean(precision_vals)
+        recall_avg += np.mean(recall_vals)
+        accuracy_avg += np.mean(accuracy_vals)
+    print(str(datetime.datetime.now()) + " Final Accuracy value: " + str(accuracy_avg / folds))
+    return (precision_avg / folds + recall_avg / folds + accuracy_avg / folds) / 3
 
 
 def cross_validate_regression(data_folds, label_folds, learning_rate, num_hidden_layers, hidden_layer_sizes, num_inputs,
@@ -174,7 +170,8 @@ def cross_validate_tune_classification(data_folds, label_folds, test_data, test_
 
     # For each testing fold, set up a training and testing set and then append the loss function values
     for i in range(len(data_folds)):
-        network = Network(learning_rate, num_hidden_layers, hidden_layer_sizes, num_inputs, num_outputs, output_type,
+        hidden_layer_size = list(hidden_layer_sizes)
+        network = Network(learning_rate, num_hidden_layers, hidden_layer_size, num_inputs, num_outputs, output_type,
                           biased_layers)
         train_data = []
         train_labels = []
@@ -190,7 +187,7 @@ def cross_validate_tune_classification(data_folds, label_folds, test_data, test_
         test_data = np.array(test_data)
         test_labels = np.array(test_labels)
 
-        network.train(train_data, train_labels, max_iterations)
+        network.train(train_data, train_labels, test_data, test_labels, max_iterations)
 
         predictions = []
 
@@ -199,27 +196,21 @@ def cross_validate_tune_classification(data_folds, label_folds, test_data, test_
             predictions.append(network.predict(datapoint))
 
         # Get all precision recall and accuracy vals
-        precision_vals = np.array(precision(predictions, test_labels))
-        recall_vals = np.array(recall(predictions, test_labels))
-        accuracy_vals, matrix = accuracy(predictions, test_labels)
-        accuracy_vals = np.array(accuracy_vals)
+        pre_vals = precision(predictions, test_labels)
+        precision_vals = []
+        for val in pre_vals:
+            precision_vals.append(val[1])
+        rec_vals = recall(predictions, test_labels)
+        recall_vals = []
+        for val in rec_vals:
+            recall_vals.append(val[1])
+        acc, matrix = accuracy(predictions, test_labels)
+        accuracy_vals = []
+        for val in acc:
+            accuracy_vals.append(val[1])
 
-        precision_total = 0
-        recall_total = 0
-        accuracy_total = 0
-        counter = 0
-
-        # get the averages of all the precision, recall, and accuracy values from all the folds
-        for precision_val, recall_val, accuracy_val in zip(precision_vals, recall_vals, accuracy_vals):
-            precision_total += float(precision_val[1])
-            recall_total += float(recall_val[1])
-            accuracies.append(float(accuracy_val[1]))
-            accuracy_total += float(accuracy_val[1])
-            matrix_total = matrix_total + np.array(matrix)
-            counter += 1
-
-        precision_avg += precision_total / counter
-        recall_avg += recall_total / counter
-        accuracy_avg += accuracy_total / counter
-
+        precision_avg += np.mean(precision_vals)
+        recall_avg += np.mean(recall_vals)
+        accuracy_avg += np.mean(accuracy_vals)
+    print(str(datetime.datetime.now()) + " Accuracy value: " + str(accuracy_avg / folds))
     return (precision_avg / folds + recall_avg / folds + accuracy_avg / folds) / 3

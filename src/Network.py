@@ -135,16 +135,20 @@ class Network:
             best_metric = np.inf
             data_folds, label_folds = get_folds_regression(data, labels, 10)
         for i in range(max_iterations):
+            # print("-------------------------------------------------------------------------")
             for datapoint, label in zip(data, labels):
                 self.backpropogation(datapoint, label)
                 if self.output_type == 'classification':
-                    train_data, train_labels, test_data, test_labels = get_tune_folds(data_folds, label_folds)
-                    train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
                     predictions = []
                     for datum in test_data:
-                        predictions.append(self.feedforward(datum)[-1])
+                        predictions.append(self.predict(datum))
                     accuracy_vals, matrix = accuracy(predictions, test_labels)
-                    acc_val = np.mean(accuracy_vals)
+                    acc_val = []
+                    for j in range(len(accuracy_vals)):
+                        acc_val.append(accuracy_vals[j][1])
+
+                    acc_val = np.mean(acc_val)
+                    # print("Training Accuracy: " + str(acc_val))
 
                     new_metric = acc_val
                     if new_metric < best_metric:
@@ -152,7 +156,6 @@ class Network:
                         return
                 elif self.output_type == 'regression':
                     train_data, train_labels, test_data, test_labels = get_tune_folds(data_folds, label_folds)
-                    train_data_folds, train_label_folds = get_folds_regression(train_data, train_labels, 10)
                     predictions = []
                     for datum in test_data:
                         predictions.append(self.feedforward(datum)[-1])
@@ -163,8 +166,15 @@ class Network:
                         print("convergence reached")
                         return
 
+    def predict(self, test_point):
+        prediction = self.feedforward(test_point)[-1]
+        pred_max = np.max(prediction)
+        for j in range(len(prediction)):
 
-    # def predict(self, test_point):
-        # TODO
-        # return self.feedforward(test_point)[-1]
+            if prediction[j] == pred_max:
+                prediction[j] = 1
+            else:
+                prediction[j] = 0
+
+        return prediction
 

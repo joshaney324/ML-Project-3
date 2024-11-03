@@ -6,6 +6,7 @@ from HelperFunctions import binary_encoding
 from Fold_functions import get_tune_folds, get_folds_classification
 from HyperparameterTune import hyperparameter_tune_classification
 from CrossValidateFunctions import cross_validate_classification
+from src.Network import Network
 
 # network = Network(0.01, 2, [2, 2], 2, 2, "classification", [])
 #
@@ -26,6 +27,20 @@ from CrossValidateFunctions import cross_validate_classification
 # prediction3 = network.feedforward([1, 1])[-1]
 #
 # prediction4 = network.feedforward([0, 0])[-1]
+
+abalone = AbaloneSet()
+data = abalone.get_data()
+labels = abalone.get_labels()
+labels = labels.reshape(-1, 1)
+network = Network(0.01, 2, [4, 4], 10, 1, "regression", [])
+predictions = []
+for i in range(10):
+    for datum, label in zip(data, labels):
+        network.backpropogation(datum, label)
+for i in range(len(data)):
+    layers = network.feedforward(data[i])
+    prediction = layers[-1][0]
+    predictions.append(prediction)
 
 breast = BreastCancerSet()
 data = breast.get_data()

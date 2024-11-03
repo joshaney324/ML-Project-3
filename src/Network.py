@@ -1,5 +1,5 @@
 import numpy as np
-from Layer import Layer, softmax
+from Layer import Layer, softmax, sigmoid
 from Metric_functions import mean_squared_error, accuracy
 from CrossValidateFunctions import cross_validate_tune_classification, cross_validate_tune_regression
 from Fold_functions import get_tune_folds, get_folds_classification, get_folds_regression
@@ -48,12 +48,15 @@ class Network:
 
     def feedforward(self, inputs):
         layer_vals = []
-
-        for i in range(len(self.layers)):
-            if i == 0:
-                layer_vals.append(self.layers[i].feed_forward(inputs))
-            else:
-                layer_vals.append(self.layers[i].feed_forward(layer_vals[-1]))
+        if len(self.layers) == 1:
+            layer_vals.append(self.layers[0].feed_forward(inputs))
+        else:
+            for i in range(len(self.layers) - 1):
+                if i == 0:
+                    layer_vals.append(sigmoid(self.layers[i].feed_forward(inputs)))
+                else:
+                    layer_vals.append(sigmoid(self.layers[i].feed_forward(layer_vals[-1])))
+            layer_vals.append(self.layers[-1].feed_forward(layer_vals[-1]))
         if self.output_type == "classification":
             layer_vals[-1] = softmax(layer_vals[-1])
         return layer_vals

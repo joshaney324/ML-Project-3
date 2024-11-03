@@ -29,8 +29,7 @@ class Node:
             output = 1
             return output
         else:
-            output = np.dot(inputs, self.weights)
-            return sigmoid(output)
+            return np.dot(inputs, self.weights)
 
     def get_updates(self, learning_rate, node_error, node_val, inputs, is_output):
         node_weight_updates = []

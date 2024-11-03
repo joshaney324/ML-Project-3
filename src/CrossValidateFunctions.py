@@ -212,5 +212,5 @@ def cross_validate_tune_classification(data_folds, label_folds, test_data, test_
         precision_avg += np.mean(precision_vals)
         recall_avg += np.mean(recall_vals)
         accuracy_avg += np.mean(accuracy_vals)
-    print(str(datetime.datetime.now()) + " Accuracy value: " + str(accuracy_avg / folds))
+    # print(str(datetime.datetime.now()) + " Accuracy value: " + str(accuracy_avg / folds))
     return (precision_avg / folds + recall_avg / folds + accuracy_avg / folds) / 3

@@ -1,9 +1,10 @@
 import numpy as np
-from Layer import Layer, softmax, sigmoid
+from Layer import Layer, softmax, sigmoid_layer
 from Metric_functions import mean_squared_error, accuracy
 from CrossValidateFunctions import cross_validate_tune_classification, cross_validate_tune_regression
 from Fold_functions import get_tune_folds, get_folds_classification, get_folds_regression
 from src.Node import sigmoid_derivative
+import math
 
 
 # TODO: Change bias configuration or backpropogation and error algorithm so weights from biases can be updated
@@ -53,9 +54,9 @@ class Network:
         else:
             for i in range(len(self.layers) - 1):
                 if i == 0:
-                    layer_vals.append(sigmoid(self.layers[i].feed_forward(inputs)))
+                    layer_vals.append(sigmoid_layer(self.layers[i].feed_forward(inputs)))
                 else:
-                    layer_vals.append(sigmoid(self.layers[i].feed_forward(layer_vals[-1])))
+                    layer_vals.append(sigmoid_layer(self.layers[i].feed_forward(layer_vals[-1])))
             layer_vals.append(self.layers[-1].feed_forward(layer_vals[-1]))
         if self.output_type == "classification":
             layer_vals[-1] = softmax(layer_vals[-1])
@@ -77,6 +78,11 @@ class Network:
     def backpropogation(self, inputs, expected_outputs):
 
         layer_vals = self.feedforward(inputs)
+        for layer_val in layer_vals:
+            for val in layer_val:
+                if math.isnan(val):
+                    pass
+
         error_vals = self.get_errors(layer_vals[-1], expected_outputs)
         weight_updates = []
         # input_layer_weight_updates = []

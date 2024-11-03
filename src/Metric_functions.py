@@ -27,7 +27,7 @@ def mean_squared_error(predictions, true_vals, n):
     # square all the differences between the predictions and the true values
     for i in range(len(predictions)):
         val = abs(true_vals[i] - predictions[i]) ** 2
-        error += val[0, 0]
+        error += val[0]
     # return the error divided by n
     return error / n
 

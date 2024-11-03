@@ -1,14 +1,16 @@
 import numpy as np
-from Node import Node, node_error_calc, sigmoid_derivative
+from Node import Node, node_error_calc, sigmoid_derivative, sigmoid
 
 
 def softmax(output_vals):
     return np.exp(output_vals)/np.sum(np.exp(output_vals))
 
-def sigmoid(output_vals):
+
+def sigmoid_layer(output_vals):
     for i in range(len(output_vals)):
         output_vals[i] = sigmoid(output_vals[i])
     return output_vals
+
 
 class Layer:
     def __init__(self, num_nodes, num_inputs, has_bias):

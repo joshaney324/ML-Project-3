@@ -127,7 +127,7 @@ class Network:
         # calculate the changes in the weights to the first hidden layer -- only change from the following for loop is that the previous row values are just the input layer values
         if len(self.layers) > 1:
             layer_weight_updates = self.layers[0].get_weight_updates(self.learning_rate, False, error_vals[0],
-                                                                    layer_vals[0], inputs)
+                                                                     layer_vals[0], inputs)
             weight_updates.append(layer_weight_updates)
             for k in range(1, len(self.layers) - 1):
                 layer_weight_updates = self.layers[k].get_weight_updates(self.learning_rate, False, error_vals[0],
@@ -135,7 +135,7 @@ class Network:
                 weight_updates.append(layer_weight_updates)
 
             layer_weight_updates = self.layers[-1].get_weight_updates(self.learning_rate, True, error_vals[-1],
-                                                                    layer_vals[-1], layer_vals[-2])
+                                                                      layer_vals[-1], layer_vals[-2])
             weight_updates.append(layer_weight_updates)
         if len(self.layers) == 1:
             layer_weight_updates = self.layers[0].get_weight_updates(self.learning_rate, True, error_vals[0],

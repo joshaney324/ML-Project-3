@@ -17,8 +17,6 @@ def cross_validate_classification(data_folds, label_folds, tune_data, tune_label
     recall_avg = 0.0
     accuracy_avg = 0.0
     folds = len(data_folds)
-    matrix_total = np.zeros((2, 2))
-    accuracies = []
     network = Network(learning_rate, num_hidden_layers, hidden_layer_sizes, num_inputs, num_outputs, output_type,
                       biased_layers)
 
@@ -69,13 +67,15 @@ def cross_validate_classification(data_folds, label_folds, tune_data, tune_label
     return (precision_avg / folds + recall_avg / folds + accuracy_avg / folds) / 3
 
 
-def cross_validate_regression(data_folds, label_folds, learning_rate, num_hidden_layers, hidden_layer_sizes, num_inputs,
-                              num_outputs, output_type, biased_layers, max_iterations):
+def cross_validate_regression(data_folds, label_folds, tune_data, tune_labels, learning_rate, num_hidden_layers, hidden_layer_sizes,
+                              num_inputs, num_outputs, output_type, biased_layers, max_iterations):
     from Network import Network
-    # This function is meant to cross validate the regression sets it returns a mean squared error
+    # the cross_validate function is meant to get the precision, recall and accuracy values from each fold then print
+    # out the average across folds. this function takes in a list of data folds and a list of label folds. it does not
+    # return anything but prints out the metrics
 
     # Set up variables
-    mean_squared_error_avg = 0.0
+    mse_avg = 0.0
     folds = len(data_folds)
     network = Network(learning_rate, num_hidden_layers, hidden_layer_sizes, num_inputs, num_outputs, output_type,
                       biased_layers)
@@ -102,14 +102,14 @@ def cross_validate_regression(data_folds, label_folds, learning_rate, num_hidden
         test_data = np.array(test_data)
         test_labels = np.array(test_labels)
 
-        network.train(train_data, train_labels, max_iterations)
+        network.train(train_data, train_labels, tune_data, tune_labels, max_iterations)
         predictions = []
         for datapoint in test_data:
             predictions.append(network.predict(datapoint))
 
-        mean_squared_error_avg += mean_squared_error(test_labels, predictions, len(predictions))
-
-    return mean_squared_error_avg / folds
+        mse_avg += mean_squared_error(test_labels, predictions, len(predictions))
+    print(str(datetime.datetime.now()) + " Final mse value: " + str(mse_avg / folds))
+    return mse_avg / folds
 
 
 def cross_validate_tune_regression(data_folds, label_folds, test_data, test_labels, learning_rate, num_hidden_layers,

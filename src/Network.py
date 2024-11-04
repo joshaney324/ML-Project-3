@@ -85,53 +85,6 @@ class Network:
 
         error_vals = self.get_errors(layer_vals[-1], expected_outputs)
         weight_updates = []
-        # input_layer_weight_updates = []
-        # # calculate the changes in the weights to the first hidden layer -- only change from the following for loop is that the previous row values are just the input layer values
-        # if len(self.layers) > 1:
-        #     for h in range(len(self.layers[0].node_list)):
-        #         node_weight_updates = []
-        #         for j in range(len(self.layers[0].node_list[h].weights)):
-        #             weight_update = self.learning_rate * error_vals[0][h] * sigmoid_derivative(layer_vals[0][h]) * inputs[j]
-        #             node_weight_updates.append(weight_update)
-        #         input_layer_weight_updates.append(node_weight_updates)
-        #     weight_updates.append(input_layer_weight_updates)
-        # # calculate the changes in the weights to the remaining hidden layers
-        # for k in range(1, len(self.layers) - 1):
-        #     # initialize the weight update matrix for this layer -- this will store all the updates to all the weights TO the layer
-        #     layer_weight_updates = []
-        #     # for each node on the layer...
-        #     for h in range(len(self.layers[k].node_list)):
-        #         # initialize the weight update array for that node -- this will store all the updates to all the weights TO the node
-        #         node_weight_updates = []
-        #         # for every node on the previous layer (equivalently, every weight incoming to this node
-        #         for j in range(len(self.layers[k].node_list[h].weights)):
-        #             # update function from the book -- multiply learning rate, error on this node, derivative of activation function for this node at its current value, and value of node the weight is coming from
-        #             weight_update = self.learning_rate * error_vals[k][h] * sigmoid_derivative(layer_vals[k][h]) * layer_vals[k-1][j]
-        #             # append the weight update for that weight to the update array for the node
-        #             node_weight_updates.append(weight_update)
-        #         # append the update array for that node to the update matrix for the layer
-        #         layer_weight_updates.append(node_weight_updates)
-        #     # append the update matrix for that layer to the structure storing all weight updates for the network
-        #     weight_updates.append(layer_weight_updates)
-        # output_layer_weight_updates = []
-        # # calculate the changes in the weights to the output layer -- only change from the previous for loop is that the derivative of the activation function is 1, so it has been taken out (and some indexing)
-        # if len(self.layers) > 1:
-        #     for h in range(len(self.layers[-1].node_list)):
-        #         node_weight_updates = []
-        #         for j in range(len(self.layers[-1].node_list[h].weights)):
-        #             weight_update = self.learning_rate * error_vals[-1][h] * layer_vals[-2][j]
-        #             node_weight_updates.append(weight_update)
-        #         output_layer_weight_updates.append(node_weight_updates)
-        #     weight_updates.append(output_layer_weight_updates)
-        #
-        # if len(self.layers) == 1:
-        #     for h in range(len(self.layers[0].node_list)):
-        #         node_weight_updates = []
-        #         for j in range(len(self.layers[0].node_list[h].weights)):
-        #             weight_update = self.learning_rate * error_vals[0][h] * inputs[j]
-        #             node_weight_updates.append(weight_update)
-        #         input_layer_weight_updates.append(node_weight_updates)
-        #     weight_updates.append(input_layer_weight_updates)
 
         # calculate the changes in the weights to the first hidden layer -- only change from the following for loop is that the previous row values are just the input layer values
         if len(self.layers) > 1:
@@ -155,6 +108,7 @@ class Network:
             layer.update_weights(weight_updates[i])
 
     def train(self, data, labels, test_data, test_labels, max_iterations):
+        best_metric = None
         if self.output_type == 'classification':
             best_metric = 0.0
             data_folds, label_folds = get_folds_classification(data, labels, 10)
@@ -178,30 +132,35 @@ class Network:
                     # print("Training Accuracy: " + str(acc_val))
 
                     new_metric = acc_val
-                    if new_metric < best_metric:
-                        print("convergence reached")
-                        return
+                    # if new_metric < best_metric:
+                    #     print("convergence reached")
+                    #     return
+                    # else:
+                    best_metric = new_metric
                 elif self.output_type == 'regression':
-                    train_data, train_labels, test_data, test_labels = get_tune_folds(data_folds, label_folds)
                     predictions = []
                     for datum in test_data:
                         predictions.append(self.feedforward(datum)[-1])
                     mse = mean_squared_error(test_labels, predictions, len(predictions))
 
                     new_metric = mse
-                    if new_metric > best_metric:
-                        print("convergence reached")
-                        return
+                    print("Training mse: " + str(mse))
+                    # if new_metric > best_metric:
+                    #     print("convergence reached")
+                    #     return
+                    # else:
+                    best_metric = new_metric
 
     def predict(self, test_point):
         prediction = self.feedforward(test_point)[-1]
         pred_max = np.max(prediction)
         for j in range(len(prediction)):
 
-            if prediction[j] == pred_max:
-                prediction[j] = 1
-            else:
-                prediction[j] = 0
+            if self.output_type == 'classification':
+                if prediction[j] == pred_max:
+                    prediction[j] = 1
+                else:
+                    prediction[j] = 0
 
         return prediction
 

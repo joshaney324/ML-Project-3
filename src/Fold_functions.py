@@ -53,6 +53,12 @@ def get_folds_regression(data, labels, num_folds):
 
     # for every group in datapoint_groups take a particular group and put each value from the specific group into the
     # specified folds
+    # for x in range(len(datapoint_groups[0])):
+    #     for i in range(num_folds):
+    #         for j in range(len(datapoint_groups)):
+    #             if len(datapoint_groups[j]) > j:
+    #                 folds[i].append(datapoint_groups[j][x])
+
     for i, group in enumerate(datapoint_groups):
         for j, row in enumerate(group):
             fold_index = (j + i) % num_folds
@@ -64,7 +70,10 @@ def get_folds_regression(data, labels, num_folds):
     label_folds = []
 
     # Create fold variables for labels and data
+
     for fold in folds:
+        np.random.shuffle(fold)
+
         data_folds.append(fold[:, :-1])
         label_folds.append(fold[:, -1])
 

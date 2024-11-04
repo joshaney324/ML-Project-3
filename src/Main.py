@@ -11,45 +11,25 @@ from CrossValidateFunctions import cross_validate_classification
 from src.Network import Network
 from Metric_functions import mean_squared_error
 
-# network = Network(0.01, 2, [2, 2], 2, 2, "classification", [])
-#
-# data = [[0, 0], [0, 1], [1, 0], [1, 1]]
-# data = np.array(data)
-# labels = [[0], [1], [1], [1]]
-# labels = np.array(labels)
-# labels = binary_encoding(labels, [0])
-#
-# for i in range(500):
-#     for datapoint, label in zip(data, labels):
-#         network.backpropogation(datapoint, label)
-#
-# prediction = network.feedforward([0, 1])[-1]
-#
-# prediction2 = network.feedforward([1, 0])[-1]
-#
-# prediction3 = network.feedforward([1, 1])[-1]
-#
-# prediction4 = network.feedforward([0, 0])[-1]
+abalone = AbaloneSet()
+data = abalone.get_data()
+labels = abalone.get_labels()
+labels = labels.reshape(-1, 1)
+network = Network(0.01, 2, [5, 5], 10, 1, "regression", [])
+predictions = []
 
-# abalone = AbaloneSet()
-# data = abalone.get_data()
-# labels = abalone.get_labels()
-# labels = labels.reshape(-1, 1)
-# network = Network(0.01, 0, [], 10, 1, "regression", [])
-# predictions = []
-#
-# data_folds, label_folds = get_folds_regression(data, labels, 10)
-#
-# test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
-# network.train(train_data, train_labels, test_data, test_labels, 10)
-#
-# for i in range(len(data)):
-#     layers = network.feedforward(data[i])
-#     prediction = layers[-1][0]
-#     predictions.append(prediction)
-#
-# print(mean_squared_error(labels, predictions, len(predictions)))
-#
+data_folds, label_folds = get_folds_regression(data, labels, 10)
+
+test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
+network.train(train_data, train_labels, test_data, test_labels, 10)
+
+for i in range(len(data)):
+    layers = network.feedforward(data[i])
+    prediction = layers[-1][0]
+    predictions.append(prediction)
+
+print(mean_squared_error(labels, predictions, len(predictions)))
+
 # breast = BreastCancerSet()
 # data = breast.get_data()
 # labels = breast.get_labels()
@@ -98,17 +78,17 @@ labels = binary_encoding(labels, [0])
 # print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 0,
 #                                     hidden_layer_sizes, 9, 6, "classification", [], 10))
 
-print("Glass with hidden Layers")
-
-data_folds, label_folds = get_folds_classification(data, labels, 10)
-test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
-train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
+# print("Glass with hidden Layers")
+#
+# data_folds, label_folds = get_folds_classification(data, labels, 10)
+# test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
+# train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
 # learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
 #                                                                        test_labels, 1, 9, 6, 5,
 #                                                                        [0.001, 0.005, 0.01, 0.1], [5, 7, 8])
 # print(str(learning_rate) + " " + str(hidden_layer_sizes))
-print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, 0.01, 1,
-                                    [7], 9, 6, "classification", [0], 10))
+# print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, 0.01, 1,
+#                                     [7], 9, 6, "classification", [0], 10))
 #
 # breast = SoyBeanSet()
 # data = breast.get_data()

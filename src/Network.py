@@ -139,7 +139,7 @@ class Network:
                                                                      layer_vals[0], inputs)
             weight_updates.append(layer_weight_updates)
             for k in range(1, len(self.layers) - 1):
-                layer_weight_updates = self.layers[k].get_weight_updates(self.learning_rate, False, error_vals[0],
+                layer_weight_updates = self.layers[k].get_weight_updates(self.learning_rate, False, error_vals[k],
                                                                          layer_vals[k], layer_vals[k-1])
                 weight_updates.append(layer_weight_updates)
 

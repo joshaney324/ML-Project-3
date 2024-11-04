@@ -22,16 +22,20 @@ class Layer:
         if has_bias:
             self.node_list.append(Node([], True))
 
+    # This function takes in the values from the previous layer (or the input values for the network, if called on the
+    # first layer), and returns the unactivated values for every node on the current layer.
     def feed_forward(self, inputs):
         outputs = []
+        # For each node on the layer, calculate the weighted sum for that node given the input values, and append the
+        # weighted
         for node in self.node_list:
             outputs.append(node.feedforward(inputs))
 
         return outputs
 
-    ## This function returns the weight matrix of the current layer; each row represents a node in the previous layer,
-    ## with each column representing a node on the current layer, and the value in that entry representing the weight
-    ## from the previous layer's node to the current layer's node
+    # This function returns the weight matrix of the current layer; each row represents a node in the previous layer,
+    # with each column representing a node on the current layer, and the value in that entry representing the weight
+    # from the previous layer's node to the current layer's node
     def get_weight_matrix(self):
         # Declare the weight matrix
         weight_matrix = []
@@ -55,8 +59,11 @@ class Layer:
                 errors.append(node_error_calc(errors_next_layer, weight_matrix_next_layer[i]))
         return errors
 
+    # This function returns a matrix of weight updates for the incoming weights to this layer given this layer's errors,
+    # values, and inputs. Each row corresponds to one node's weight updates
     def get_weight_updates(self, learning_rate, is_output, layer_errors, layer_vals, inputs):
         layer_weight_updates = []
+        # For each node on the layer, get the updates to the weights to that node
         for h in range(len(self.node_list)):
             node_weight_updates = self.node_list[h].get_updates(learning_rate, layer_errors[h], layer_vals[h], inputs, is_output)
             layer_weight_updates.append(node_weight_updates)

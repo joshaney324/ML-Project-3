@@ -47,58 +47,79 @@ class Network:
         else:
             self.layers.append(Layer(num_outputs, num_inputs, False))
 
+    # This function carries out the forward pass of the network; it takes in a single instance's features and returns
+    # the value of each node in the network.
     def feedforward(self, inputs):
         layer_vals = []
+        # If there is only one layer, pass in the inputs for the network to get its layer values.
         if len(self.layers) == 1:
             layer_vals.append(self.layers[0].feed_forward(inputs))
+        # If there is more than one layer...
         else:
+            # Calculate the values for all the hidden layers, calling the sigmoid activation function on each weighted sum
             for i in range(len(self.layers) - 1):
+                # For the first hidden layer, use the inputs to the network as inputs to the layer.
                 if i == 0:
                     layer_vals.append(sigmoid_layer(self.layers[i].feed_forward(inputs)))
+                # For the remaining hidden layers, use the last layer's values as inputs to the current layer.
                 else:
                     layer_vals.append(sigmoid_layer(self.layers[i].feed_forward(layer_vals[-1])))
+            # For the output layer, use the last layer's values as inputs and do not call the sigmoid activation function
+            # on its weighted sum.
             layer_vals.append(self.layers[-1].feed_forward(layer_vals[-1]))
+        # If the network is initialized for classification, call the softmax activation function on the output layer.
         if self.output_type == "classification":
             layer_vals[-1] = softmax(layer_vals[-1])
         return layer_vals
 
-    # This function returns a list of lists of errors for all nodes in the network
+    # This function returns a list of errors for each layer in the network. Each of the layer errors is a list of errors
+    # for the nodes in that layer.
     def get_errors(self, real_outputs, expected_outputs):
         # Get the error of the output layer
         errors = np.array(expected_outputs) - np.array(real_outputs)
         errors = [errors]
+        # Get the error of the remaining layers, proceeding backwards from the output layer
         for i in range(len(self.layers) - 1):
             # Get the weight matrix of the last layer with a calculated error
             weight_matrix = self.layers[-(i+1)].get_weight_matrix()
             # Add the errors of the current layer to the errors list
             layer_errors = self.layers[-(i+2)].get_errors(errors[0], weight_matrix)
+            # Insert the layer's errors at the beginning of the layer error list
             errors.insert(0, layer_errors)
         return errors
 
+    # This brings all other functions together. Given the features of a single instance and that instance's label, it
+    # calculates the layer values for every node given the input, calculates the error for each node given the actual
+    # and expected outputs, calculates the changes to the network's weights given those values, and updates the weights.
     def backpropogation(self, inputs, expected_outputs):
-
+        # Get the values of each node in the network for the input and check that the values are valid.
         layer_vals = self.feedforward(inputs)
         for layer_val in layer_vals:
             for val in layer_val:
                 if math.isnan(val):
                     pass
 
+        # Get the error on each node in the network given the real outputs and expected ouputs.
         error_vals = self.get_errors(layer_vals[-1], expected_outputs)
         weight_updates = []
 
-        # calculate the changes in the weights to the first hidden layer -- only change from the following for loop is that the previous row values are just the input layer values
+        # check that the network has at least two layers (first hidden layer is distinct from the output layer)
         if len(self.layers) > 1:
+            # get the weight changes for the weights to the first hidden layer
             layer_weight_updates = self.layers[0].get_weight_updates(self.learning_rate, False, error_vals[0],
                                                                      layer_vals[0], inputs)
             weight_updates.append(layer_weight_updates)
+            # get the weight changes for the weights to the remaining hidden layers
             for k in range(1, len(self.layers) - 1):
                 layer_weight_updates = self.layers[k].get_weight_updates(self.learning_rate, False, error_vals[k],
                                                                          layer_vals[k], layer_vals[k-1])
                 weight_updates.append(layer_weight_updates)
-
+            #get the weight changes for the weights to the output layer
             layer_weight_updates = self.layers[-1].get_weight_updates(self.learning_rate, True, error_vals[-1],
                                                                       layer_vals[-1], layer_vals[-2])
             weight_updates.append(layer_weight_updates)
+        # if there are not at least two layers, and therefore the first (non-input) layer is the output layer, get the
+        # weight updates for the weights to our one layer
         if len(self.layers) == 1:
             layer_weight_updates = self.layers[0].get_weight_updates(self.learning_rate, True, error_vals[0],
                                                                      layer_vals[0], inputs)

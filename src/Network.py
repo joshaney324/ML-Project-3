@@ -119,36 +119,36 @@ class Network:
             # print("-------------------------------------------------------------------------")
             for datapoint, label in zip(data, labels):
                 self.backpropogation(datapoint, label)
-                if self.output_type == 'classification':
-                    predictions = []
-                    for datum in test_data:
-                        predictions.append(self.predict(datum))
-                    accuracy_vals, matrix = accuracy(predictions, test_labels)
-                    acc_val = []
-                    for j in range(len(accuracy_vals)):
-                        acc_val.append(accuracy_vals[j][1])
+            if self.output_type == 'classification':
+                predictions = []
+                for datum in test_data:
+                    predictions.append(self.predict(datum))
+                accuracy_vals, matrix = accuracy(predictions, test_labels)
+                acc_val = []
+                for j in range(len(accuracy_vals)):
+                    acc_val.append(accuracy_vals[j][1])
 
-                    acc_val = np.mean(acc_val)
-                    # print("Training Accuracy: " + str(acc_val))
+                acc_val = np.mean(acc_val)
+                # print("Training Accuracy: " + str(acc_val))
 
-                    new_metric = acc_val
-                    # if new_metric < best_metric:
-                    #     print("convergence reached")
-                    #     return
-                    # else:
+                new_metric = acc_val
+                if new_metric < best_metric:
+                    # print("convergence reached")
+                    return
+                else:
                     best_metric = new_metric
-                elif self.output_type == 'regression':
-                    predictions = []
-                    for datum in test_data:
-                        predictions.append(self.feedforward(datum)[-1])
-                    mse = mean_squared_error(test_labels, predictions, len(predictions))
+            elif self.output_type == 'regression':
+                predictions = []
+                for datum in test_data:
+                    predictions.append(self.feedforward(datum)[-1])
+                mse = mean_squared_error(test_labels, predictions, len(predictions))
 
-                    new_metric = mse
-                    print("Training mse: " + str(mse))
-                    # if new_metric > best_metric:
-                    #     print("convergence reached")
-                    #     return
-                    # else:
+                new_metric = mse
+                # print("Training mse: " + str(mse))
+                if new_metric > best_metric:
+                    # print("convergence reached")
+                    return
+                else:
                     best_metric = new_metric
 
     def predict(self, test_point):

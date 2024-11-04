@@ -43,7 +43,7 @@ def hyperparameter_tune_regression(data_folds, label_folds, test_data, test_labe
         for layer_perm in layer_perms:
             new_metric = cross_validate_tune_regression(data_folds, label_folds, test_data, test_labels,
                                                             learning_rate_value, num_hidden_layers, layer_perm,
-                                                            num_inputs, num_outputs, "classification", [],
+                                                            num_inputs, num_outputs, "regression", [],
                                                             max_iterations)
             if new_metric > avg_metric:
                 avg_metric = new_metric

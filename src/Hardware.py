@@ -26,6 +26,13 @@ class MachineSet:
 
         self.data = np.concatenate((normalized_features, labels), axis=1)
         self.data = np.array(self.data, dtype=float)
+        # features_min = np.mean(features, axis=0)
+        # features_max = np.std(features, axis=0)
+        #
+        # normalized_features = (features - features_min) / features_max
+        #
+        # self.data = np.concatenate((normalized_features, labels), axis=1)
+        # self.data = np.array(self.data, dtype=float)
 
     def get_data(self):
         # return only data and no labels

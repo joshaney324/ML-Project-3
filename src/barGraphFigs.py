@@ -172,8 +172,9 @@ for bar in bars:
 plt.ylim(0, 1.3)
 
 # Display plot
-plt.show()
 plt.savefig('../Figures/machine_bar.svg')
+plt.show()
+
 
 # Forest
 # Data

@@ -150,14 +150,14 @@ class Network:
                     acc_val.append(accuracy_vals[j][1])
 
                 acc_val = np.mean(acc_val)
-                print("Training Accuracy: " + str(acc_val))
+                # print("Training Accuracy: " + str(acc_val))
 
                 new_metric = acc_val
-                # if new_metric < best_metric:
-                #     # print("convergence reached")
-                #     return
-                # else:
-                #     best_metric = new_metric
+                if new_metric < best_metric:
+                    # print("convergence reached")
+                    return
+                else:
+                    best_metric = new_metric
             elif self.output_type == 'regression':
                 predictions = []
                 for datum in test_data:
@@ -165,12 +165,12 @@ class Network:
                 mse = mean_squared_error(test_labels, predictions, len(predictions))
 
                 new_metric = mse
-                print("Training mse: " + str(mse))
-                # if new_metric > best_metric:
-                #     # print("convergence reached")
-                #     return
-                # else:
-                #     best_metric = new_metric
+                # print("Training mse: " + str(mse))
+                if new_metric > best_metric:
+                    # print("convergence reached")
+                    return
+                else:
+                    best_metric = new_metric
 
     def predict(self, test_point):
         prediction = self.feedforward(test_point)[-1]

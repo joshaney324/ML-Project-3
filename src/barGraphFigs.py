@@ -114,7 +114,7 @@ plt.show()
 # Abalone
 # Data
 labels = ['0 Hidden Layers', '1 Hidden Layer', '2 Hidden Layers']
-values = [0.424, 0.902, 0.783]
+values = [0.424, 0.545, 0.766]
 
 # Positions for bars
 x = np.arange(len(labels))

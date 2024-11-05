@@ -1,5 +1,7 @@
 from itertools import permutations
 
+import numpy as np
+
 
 # This function is meant to tune the classification neural network model. It takes in datafolds, labels folds, a
 # test/tune set it also takes a list hyperparameters to test in the grid search
@@ -37,7 +39,7 @@ def hyperparameter_tune_regression(data_folds, label_folds, test_data, test_labe
     from CrossValidateFunctions import (cross_validate_tune_regression)
 
     # set up best value variables
-    avg_metric = 0.0
+    avg_metric = np.inf
     learning_rate = None
     hidden_layer_sizes = []
 
@@ -50,7 +52,7 @@ def hyperparameter_tune_regression(data_folds, label_folds, test_data, test_labe
                                                             num_inputs, num_outputs, "regression", [],
                                                             max_iterations)
             # Check if model performed better
-            if new_metric > avg_metric:
+            if new_metric < avg_metric:
                 avg_metric = new_metric
                 learning_rate = learning_rate_value
                 hidden_layer_sizes = layer_perm

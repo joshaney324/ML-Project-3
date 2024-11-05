@@ -11,177 +11,177 @@ from ForestFires import ForestFiresSet
 
 # The process for testing a dataset will be the same for all. The comments on the first will apply to the rest
 
-# Soy
-
-print("Soy Bean")
-
-# No layers
-
-# Set up dataset class and collect data and labels
-soy = SoyBeanSet()
-data = soy.get_data()
-labels = soy.get_labels()
-labels = labels.reshape(-1, 1)
-labels = binary_encoding(labels, [0])
-
-# Get folds before getting hold out tune fold
-data_folds, label_folds = get_folds_classification(data, labels, 10)
-
-# Get tuning fold
-test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
-
-# Get folds seperate from the tuning fold
-train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
-
-# Tune the hyperparameters of the model
-learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
-                                                                       test_labels, 0, len(data[0]), len(labels[0]), 10,
-                                                           [0.001, 0.01, 0.1], [])
-
-# Test the model
-print("No Hidden Layers")
-print(str(learning_rate) + " " + str(hidden_layer_sizes))
-print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 0,
-                                hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", [], 10))
-
-# 1 Layer
-
-# reset folds and hyperparameter tune again
-data_folds, label_folds = get_folds_classification(data, labels, 10)
-test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
-train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
-learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
-                                                                       test_labels, 1, len(data[0]), len(labels[0]), 10,
-                                                           [0.001, 0.01, 0.1], [5, 10, 15])
-
-# Test the model
-print("1 Hidden Layer")
-print(str(learning_rate) + " " + str(hidden_layer_sizes))
-print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 1,
-                                hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", hidden_layer_sizes, 10))
-
-# 2 Layer
-
-# reset folds and hyperparameter tune again
-data_folds, label_folds = get_folds_classification(data, labels, 10)
-test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
-train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
-learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
-                                                                       test_labels, 2, len(data[0]), len(labels[0]), 10,
-                                                           [0.001, 0.01, 0.1], [5, 10, 15])
-
-# Test the model
-print("2 Hidden Layers")
-print(str(learning_rate) + " " + str(hidden_layer_sizes))
-print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 2,
-                                hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", hidden_layer_sizes, 10))
-
-
-
-
-# Glass
-print("Glass")
-
-# No layers
-
-glass = GlassSet(7)
-data = glass.get_data()
-labels = glass.get_labels()
-labels = labels.reshape(-1, 1)
-labels = binary_encoding(labels, [0])
-
-
-data_folds, label_folds = get_folds_classification(data, labels, 10)
-test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
-train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
-learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
-                                                                       test_labels, 0, len(data[0]), len(labels[0]), 10,
-                                                           [0.001, 0.01, 0.1], [])
-print("No Hidden Layers")
-print(str(learning_rate) + " " + str(hidden_layer_sizes))
-print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 0,
-                                hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", [], 10))
-
-# 1 Layer
-
-data_folds, label_folds = get_folds_classification(data, labels, 10)
-test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
-train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
-learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
-                                                                       test_labels, 1, len(data[0]), len(labels[0]), 10,
-                                                           [0.001, 0.01, 0.1], [4, 6, 8])
-
-print("1 Hidden Layer")
-print(str(learning_rate) + " " + str(hidden_layer_sizes))
-print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 1,
-                                hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", hidden_layer_sizes, 10))
-
-# 2 Layer
-
-data_folds, label_folds = get_folds_classification(data, labels, 10)
-test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
-train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
-learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
-                                                                       test_labels, 2, len(data[0]), len(labels[0]), 10,
-                                                           [0.001, 0.01, 0.1], [4, 6, 8])
-
-print("2 Hidden Layers")
-print(str(learning_rate) + " " + str(hidden_layer_sizes))
-print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 2,
-                                hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", hidden_layer_sizes, 10))
-
-# Breast
-
-print("Breast Cancer")
-
-# No layers
-
-breast = BreastCancerSet()
-data = breast.get_data()
-labels = breast.get_labels()
-labels = labels.reshape(-1, 1)
-labels = binary_encoding(labels, [0])
-
-
-data_folds, label_folds = get_folds_classification(data, labels, 10)
-test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
-train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
-learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
-                                                                       test_labels, 0, len(data[0]), len(labels[0]), 10,
-                                                           [0.001, 0.01, 0.1], [])
-print("No Hidden Layers")
-print(str(learning_rate) + " " + str(hidden_layer_sizes))
-print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 0,
-                                hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", [], 10))
-
-# 1 Layer
-
-data_folds, label_folds = get_folds_classification(data, labels, 10)
-test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
-train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
-learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
-                                                                       test_labels, 1, len(data[0]), len(labels[0]), 10,
-                                                           [0.001, 0.01, 0.1], [4, 6, 8])
-
-print("1 Hidden Layer")
-print(str(learning_rate) + " " + str(hidden_layer_sizes))
-print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 1,
-                                hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", hidden_layer_sizes, 10))
-
-# 2 Layer
-
-data_folds, label_folds = get_folds_classification(data, labels, 10)
-test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
-train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
-learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
-                                                                       test_labels, 2, len(data[0]), len(labels[0]), 20,
-                                                           [0.001, 0.01, 0.1], [2, 3, 4, 6])
-
-print("2 Hidden Layers")
-print(str(learning_rate) + " " + str(hidden_layer_sizes))
-print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 2,
-                                hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", hidden_layer_sizes, 20))
-
+# # Soy
+#
+# print("Soy Bean")
+#
+# # No layers
+#
+# # Set up dataset class and collect data and labels
+# soy = SoyBeanSet()
+# data = soy.get_data()
+# labels = soy.get_labels()
+# labels = labels.reshape(-1, 1)
+# labels = binary_encoding(labels, [0])
+#
+# # Get folds before getting hold out tune fold
+# data_folds, label_folds = get_folds_classification(data, labels, 10)
+#
+# # Get tuning fold
+# test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
+#
+# # Get folds seperate from the tuning fold
+# train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
+#
+# # Tune the hyperparameters of the model
+# learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
+#                                                                        test_labels, 0, len(data[0]), len(labels[0]), 10,
+#                                                            [0.001, 0.01, 0.1], [])
+#
+# # Test the model
+# print("No Hidden Layers")
+# print(str(learning_rate) + " " + str(hidden_layer_sizes))
+# print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 0,
+#                                 hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", [], 10))
+#
+# # 1 Layer
+#
+# # reset folds and hyperparameter tune again
+# data_folds, label_folds = get_folds_classification(data, labels, 10)
+# test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
+# train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
+# learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
+#                                                                        test_labels, 1, len(data[0]), len(labels[0]), 10,
+#                                                            [0.001, 0.01, 0.1], [5, 10, 15])
+#
+# # Test the model
+# print("1 Hidden Layer")
+# print(str(learning_rate) + " " + str(hidden_layer_sizes))
+# print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 1,
+#                                 hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", hidden_layer_sizes, 10))
+#
+# # 2 Layer
+#
+# # reset folds and hyperparameter tune again
+# data_folds, label_folds = get_folds_classification(data, labels, 10)
+# test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
+# train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
+# learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
+#                                                                        test_labels, 2, len(data[0]), len(labels[0]), 10,
+#                                                            [0.001, 0.01, 0.1], [5, 10, 15])
+#
+# # Test the model
+# print("2 Hidden Layers")
+# print(str(learning_rate) + " " + str(hidden_layer_sizes))
+# print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 2,
+#                                 hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", hidden_layer_sizes, 10))
+#
+#
+#
+#
+# # Glass
+# print("Glass")
+#
+# # No layers
+#
+# glass = GlassSet(7)
+# data = glass.get_data()
+# labels = glass.get_labels()
+# labels = labels.reshape(-1, 1)
+# labels = binary_encoding(labels, [0])
+#
+#
+# data_folds, label_folds = get_folds_classification(data, labels, 10)
+# test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
+# train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
+# learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
+#                                                                        test_labels, 0, len(data[0]), len(labels[0]), 10,
+#                                                            [0.001, 0.01, 0.1], [])
+# print("No Hidden Layers")
+# print(str(learning_rate) + " " + str(hidden_layer_sizes))
+# print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 0,
+#                                 hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", [], 10))
+#
+# # 1 Layer
+#
+# data_folds, label_folds = get_folds_classification(data, labels, 10)
+# test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
+# train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
+# learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
+#                                                                        test_labels, 1, len(data[0]), len(labels[0]), 10,
+#                                                            [0.001, 0.01, 0.1], [4, 6, 8])
+#
+# print("1 Hidden Layer")
+# print(str(learning_rate) + " " + str(hidden_layer_sizes))
+# print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 1,
+#                                 hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", hidden_layer_sizes, 10))
+#
+# # 2 Layer
+#
+# data_folds, label_folds = get_folds_classification(data, labels, 10)
+# test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
+# train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
+# learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
+#                                                                        test_labels, 2, len(data[0]), len(labels[0]), 10,
+#                                                            [0.001, 0.01, 0.1], [4, 6, 8])
+#
+# print("2 Hidden Layers")
+# print(str(learning_rate) + " " + str(hidden_layer_sizes))
+# print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 2,
+#                                 hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", hidden_layer_sizes, 10))
+#
+# # Breast
+#
+# print("Breast Cancer")
+#
+# # No layers
+#
+# breast = BreastCancerSet()
+# data = breast.get_data()
+# labels = breast.get_labels()
+# labels = labels.reshape(-1, 1)
+# labels = binary_encoding(labels, [0])
+#
+#
+# data_folds, label_folds = get_folds_classification(data, labels, 10)
+# test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
+# train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
+# learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
+#                                                                        test_labels, 0, len(data[0]), len(labels[0]), 10,
+#                                                            [0.001, 0.01, 0.1], [])
+# print("No Hidden Layers")
+# print(str(learning_rate) + " " + str(hidden_layer_sizes))
+# print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 0,
+#                                 hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", [], 10))
+#
+# # 1 Layer
+#
+# data_folds, label_folds = get_folds_classification(data, labels, 10)
+# test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
+# train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
+# learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
+#                                                                        test_labels, 1, len(data[0]), len(labels[0]), 10,
+#                                                            [0.001, 0.01, 0.1], [4, 6, 8])
+#
+# print("1 Hidden Layer")
+# print(str(learning_rate) + " " + str(hidden_layer_sizes))
+# print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 1,
+#                                 hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", hidden_layer_sizes, 10))
+#
+# # 2 Layer
+#
+# data_folds, label_folds = get_folds_classification(data, labels, 10)
+# test_data, test_labels, train_data, train_labels = get_tune_folds(data_folds, label_folds)
+# train_data_folds, train_label_folds = get_folds_classification(train_data, train_labels, 10)
+# learning_rate, hidden_layer_sizes = hyperparameter_tune_classification(train_data_folds, train_label_folds, test_data,
+#                                                                        test_labels, 2, len(data[0]), len(labels[0]), 20,
+#                                                            [0.001, 0.01, 0.1], [2, 3, 4, 6])
+#
+# print("2 Hidden Layers")
+# print(str(learning_rate) + " " + str(hidden_layer_sizes))
+# print(cross_validate_classification(train_data_folds, train_label_folds, test_data, test_labels, learning_rate, 2,
+#                                 hidden_layer_sizes, len(data[0]), len(labels[0]), "classification", hidden_layer_sizes, 20))
+#
 
 # Machine
 

@@ -3444,7 +3444,7 @@ plt.figure(figsize=(12, 6))
 plt.plot(range(1, len(mse_values) + 1), mse_values, 'b-', linewidth=2)
 
 # Customize the plot
-plt.title('Training Accuracy vs Time', fontsize=14, pad=20)
+plt.title('Training Accuracy vs Time on Breast Cancer Dataset', fontsize=14, pad=20)
 plt.xlabel('Time', fontsize=12)
 plt.ylabel('Accuracy Value', fontsize=12)
 plt.grid(True, linestyle='--', alpha=0.7)

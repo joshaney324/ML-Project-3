@@ -2,7 +2,6 @@ import datetime
 
 import numpy as np
 from Metric_functions import precision, recall, accuracy, mean_squared_error
-from Fold_functions import get_folds_classification, get_folds_regression
 
 
 def cross_validate_classification(data_folds, label_folds, tune_data, tune_labels, learning_rate, num_hidden_layers, hidden_layer_sizes,
@@ -36,7 +35,7 @@ def cross_validate_classification(data_folds, label_folds, tune_data, tune_label
                     test_data.append(instance)
                     test_labels.append(label)
 
-        # make all the data into np arrays so that naive bayes class can use them
+        # make all the data into np arrays
         train_data = np.array(train_data)
         train_labels = np.array(train_labels)
         test_data = np.array(test_data)
@@ -97,7 +96,7 @@ def cross_validate_regression(data_folds, label_folds, tune_data, tune_labels, l
                     test_data.append(instance)
                     test_labels.append(label)
 
-        # make all the data into np arrays so that naive bayes class can use them
+        # Convert to np arrays
         train_data = np.array(train_data)
         train_labels = np.array(train_labels)
         test_data = np.array(test_data)

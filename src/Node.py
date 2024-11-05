@@ -1,4 +1,3 @@
-from ActivationFunction import ActivationFunction
 import numpy as np
 
 

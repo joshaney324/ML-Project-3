@@ -23,6 +23,7 @@ class ForestFiresSet:
         features = self.data[:, :-1]
         labels = self.data[:, -1:]
 
+        # min max normalization
         # Normalize all the feature rows from 0 to 1
         features_min = features.min(axis=0)
         features_max = features.max(axis=0)
@@ -31,6 +32,8 @@ class ForestFiresSet:
 
         self.data = np.concatenate((normalized_features, labels), axis=1)
         self.data = np.array(self.data, dtype=float)
+
+        # Z-score
         # features_min = np.mean(features, axis=0)
         # features_max = np.std(features, axis=0)
         #

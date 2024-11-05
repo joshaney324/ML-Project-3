@@ -21,7 +21,7 @@ class BreastCancerSet:
 
         self.data = np.array(valid_rows, dtype=int)
 
-
+        # min max normalization
         features = self.data[:, :-1]
         labels = self.data[:, -1]
         features = np.array(features, dtype=float)
@@ -36,6 +36,7 @@ class BreastCancerSet:
         self.data = np.concatenate((normalized_features, labels), axis=1)
         self.data = np.array(self.data, dtype=float)
 
+        # Z-score
         # features = self.data[:, :-1]
         # labels = self.data[:, -1]
         # features = np.array(features, dtype=float)

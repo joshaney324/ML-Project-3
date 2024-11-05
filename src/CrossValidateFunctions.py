@@ -8,8 +8,8 @@ def cross_validate_classification(data_folds, label_folds, tune_data, tune_label
                                   num_inputs, num_outputs, output_type, biased_layers, max_iterations):
     from Network import Network
     # the cross_validate function is meant to get the precision, recall and accuracy values from each fold then print
-    # out the average across folds. this function takes in a list of data folds and a list of label folds. it does not
-    # return anything but prints out the metrics
+    # out the average across folds. this function takes in a list of data folds, a list of label folds, a tuning hold
+    # out set for training, and the hyperparameters for the model. This function returns a list of all of our metrics
 
     # Set up variables
     precision_avg = 0.0
@@ -41,11 +41,15 @@ def cross_validate_classification(data_folds, label_folds, tune_data, tune_label
         test_data = np.array(test_data)
         test_labels = np.array(test_labels)
 
+        # Train Network
         network.train(train_data, train_labels, tune_data, tune_labels, max_iterations)
+
+        # Get all predictions
         predictions = []
         for datapoint in test_data:
             predictions.append(network.predict(datapoint))
 
+        # Get averages of precision recall and accuracy
         pre_vals = precision(predictions, test_labels)
         precision_vals = []
         for val in pre_vals:
@@ -62,17 +66,17 @@ def cross_validate_classification(data_folds, label_folds, tune_data, tune_label
         precision_avg += np.mean(precision_vals)
         recall_avg += np.mean(recall_vals)
         accuracy_avg += np.mean(accuracy_vals)
-    print(str(datetime.datetime.now()) + " Final Accuracy value: " + str(accuracy_avg / folds))
+        # Print final accuracy and return
+    # print(str(datetime.datetime.now()) + " Final Accuracy value: " + str(accuracy_avg / folds))
     return [precision_avg / folds, recall_avg / folds, accuracy_avg / folds]
-    # return (precision_avg / folds + recall_avg / folds + accuracy_avg / folds) / 3
 
 
 def cross_validate_regression(data_folds, label_folds, tune_data, tune_labels, learning_rate, num_hidden_layers, hidden_layer_sizes,
                               num_inputs, num_outputs, output_type, biased_layers, max_iterations):
     from Network import Network
     # the cross_validate function is meant to get the precision, recall and accuracy values from each fold then print
-    # out the average across folds. this function takes in a list of data folds and a list of label folds. it does not
-    # return anything but prints out the metrics
+    # out the average across folds. this function takes in a list of data folds, a list of label folds, a tuning hold
+    # out set for training, and the hyperparameters for the model. This function returns a list of all of our metrics
 
     # Set up variables
     mse_avg = 0.0
@@ -102,13 +106,17 @@ def cross_validate_regression(data_folds, label_folds, tune_data, tune_labels, l
         test_data = np.array(test_data)
         test_labels = np.array(test_labels)
 
+        # Train network
         network.train(train_data, train_labels, tune_data, tune_labels, max_iterations)
+
+        # Get all predictions
         predictions = []
         for datapoint in test_data:
             predictions.append(network.predict(datapoint))
 
         mse_avg += mean_squared_error(test_labels, predictions, len(predictions))
-    print(str(datetime.datetime.now()) + " Final mse value: " + str(mse_avg / folds))
+    # print mse average and return it
+    # print(str(datetime.datetime.now()) + " Final mse value: " + str(mse_avg / folds))
     return mse_avg / folds
 
 
@@ -116,7 +124,7 @@ def cross_validate_tune_regression(data_folds, label_folds, test_data, test_labe
                                    hidden_layer_sizes, num_inputs, num_outputs, output_type, biased_layers, max_iterations):
     from Network import Network
     # This function is meant to cross validate the regression sets but leave out the testing folds and use the tune
-    # folds instead
+    # folds instead. This function takes in data folds, label folds, a hold out fold, and model hyperparameters
 
     # Set up variables
     mean_squared_error_avg = 0.0
@@ -140,6 +148,7 @@ def cross_validate_tune_regression(data_folds, label_folds, test_data, test_labe
         test_data = np.array(test_data)
         test_labels = np.array(test_labels)
 
+        # Train network
         network.train(train_data, train_labels, test_data, test_labels, max_iterations)
 
         # get predictions and append them
@@ -149,6 +158,7 @@ def cross_validate_tune_regression(data_folds, label_folds, test_data, test_labe
 
         mean_squared_error_avg += mean_squared_error(test_labels, predictions, len(predictions))
 
+    # return avg mean squared error
     return mean_squared_error_avg / folds
 
 
@@ -157,7 +167,7 @@ def cross_validate_tune_classification(data_folds, label_folds, test_data, test_
                                        biased_layers, max_iterations):
     from Network import Network
     # This function is meant to cross validate the classification sets but leave out the testing folds and use the tune
-    # folds instead
+    # folds instead. This function takes in data folds, label folds, a hold out fold, and model hyperparameters
 
     # Set up variables
     precision_avg = 0.0
@@ -213,4 +223,5 @@ def cross_validate_tune_classification(data_folds, label_folds, test_data, test_
         recall_avg += np.mean(recall_vals)
         accuracy_avg += np.mean(accuracy_vals)
     # print(str(datetime.datetime.now()) + " Accuracy value: " + str(accuracy_avg / folds))
+    # Return the metrics
     return (precision_avg / folds + recall_avg / folds + accuracy_avg / folds) / 3

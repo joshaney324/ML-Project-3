@@ -129,6 +129,8 @@ class Network:
             layer.update_weights(weight_updates[i])
 
     def train(self, data, labels, test_data, test_labels, max_iterations):
+
+        # If the depending on the network type set up the best metric and folds accordingly
         best_metric = None
         if self.output_type == 'classification':
             best_metric = 0.0
@@ -138,8 +140,11 @@ class Network:
             data_folds, label_folds = get_folds_regression(data, labels, 10)
         for i in range(max_iterations):
             # print("-------------------------------------------------------------------------")
+            # Train for an epoch
             for datapoint, label in zip(data, labels):
                 self.backpropogation(datapoint, label)
+
+            # Check if the network performed better or converged. If the network converged, stop training and return
             if self.output_type == 'classification':
                 predictions = []
                 for datum in test_data:
@@ -173,8 +178,11 @@ class Network:
                     best_metric = new_metric
 
     def predict(self, test_point):
+        # Get the last layer's feed forward vals and return that as the prediction. If it is a classification network,
+        # set the max value to 1 and the rest to 0
         prediction = self.feedforward(test_point)[-1]
         pred_max = np.max(prediction)
+
         for j in range(len(prediction)):
 
             if self.output_type == 'classification':

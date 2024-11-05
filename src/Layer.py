@@ -1,11 +1,12 @@
 import numpy as np
 from Node import Node, node_error_calc, sigmoid_derivative, sigmoid
 
-
+# This function returns the soft max of a set of vals
 def softmax(output_vals):
     return np.exp(output_vals)/np.sum(np.exp(output_vals))
 
 
+# This function returns the sigmoid of a set of vals
 def sigmoid_layer(output_vals):
     for i in range(len(output_vals)):
         output_vals[i] = sigmoid(output_vals[i])
